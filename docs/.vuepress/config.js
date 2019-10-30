@@ -1,5 +1,5 @@
 module.exports = {
-    base: "/blog/",
+    base: "/Blog/",
     title: "Roman's Notebook",
     description: '📝每天记录一点点',
     themeConfig: {

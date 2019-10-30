@@ -5,12 +5,19 @@
   "main": "index.js",
   "scripts": {
     "dev": "vuepress dev docs",
-    "build": "vuepress build docs"
+    "build": "vuepress build docs",
+    "push": "bash push.sh"
   },
-  "author": "",
+  "author": "luojw",
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "husky": "^3.0.9",
     "vuepress": "^1.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "bash deploy.sh"
+    }
   }
 }
