@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: /vue-logo.png
-heroText: 让我康康你写了些啥
+heroText: 让我康康你都写了些啥
 tagline: 博客示例
 actionText: 快速上手 →
 actionLink: /zh/guide/
