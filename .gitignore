@@ -18,3 +18,9 @@ yarn-error.log*
 *.sln
 *.sw*
 docs/.vuepress/dist
+
+.DS_Store
+package-lock.json
+yarn.lock
+dist
+docs
