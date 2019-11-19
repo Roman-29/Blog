@@ -12,5 +12,5 @@ features:
   details: 编码，思考，总结，分享
 - title: 还有别忘了
   details: 乐观，自信，爱
-footer: MIT Licensed | Copyright © 2018-present Raojw
+footer: MIT Licensed | Copyright © 2019-present Luojw
 ---

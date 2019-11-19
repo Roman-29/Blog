@@ -1,89 +1,112 @@
 # CSS
 
-## 一月
+## CSS3 animation（动画） 属性
 
-### 利用 Coverage 检测可以懒加载的 modules
+使用animation能够创建动画，这可以在许多网页中取代动画图片、Flash 动画以及 JavaScript。
 
-1、打开 devTools，按`Ctrl+shift+p`，mac(`cmd+shift+p`)，输入`Coverage`，选`Drawer: Coverage`
+**定义和用法**
 
-2、reload
+animation 属性是一个简写属性，用于设置六个动画属性：
 
-3、可以看到哪些 modules 可以用`import()`懒加载了
+值|描述
+-|-
+animation-name |规定需要绑定到选择器的 keyframe 名称
+animation-duration|规定完成动画所花费的时间，以秒或毫秒计
+animation-timing-function|规定动画的速度曲线（）
+animation-delay|规定在动画开始之前的延迟
+animation-iteration-count|规定动画应该播放的次数
+animation-direction|规定是否应该轮流反向播放动画
 
-### nginx vue history 爬坑
+**具体值介绍**
 
-按照官方`nginx`的参考配置：
+animation-timing-function
 
-```bash
-location / {
-  try_files $uri $uri/ /index.html;
-}
-```
+* linear：动画从头到尾的速度是相同的。
 
-如果是项目在根目录倒没啥问题，但如果项目在 xxx 路径下，比如在`http://ip/vue/`路径下，点击跳转到路由`http://ip/vue/about`下是 ok 的，但是一刷新页面，你会发现就不好使了。原因很简单，就在上面的配置中:
+* ease：默认。动画以低速开始，然后加快，在结束前变慢。
 
-`try_files $uri $uri/ /index.html` => `http://ip/vue/about/index.html`
+------
 
-所以，这种情况正确的操作是：
+animation-iteration-count
 
-```bash
-location /vue/ {
-  try_files $uri $uri/ /vue/index.html;# 全部跳回到vue/index.html页面中
-}
-```
+* n：定义动画播放次数的数值。
 
-注意， `/vue/`实际上你上面配的`root`下的 vue 文件夹，比如你的`root`是`/app`，`location /vue/`即为 `location /app/vue/`
+* infinite：规定动画应该无限次播放。
 
-### iview menu 组件无法高亮展开问题
+--------
 
-在 iview Menu 组件中，如果数据是异步请求的，动态设置`activeName`、`openNames`会不生效，原因是 activeName、或者 openNames 这些优先告诉 Menu 组件了，挂载时(menuData 还没获取到)就已经确定好这些状态，就算是 menuData 获取到了，也不会触发 setter 进行页面状态更新
+animation-direction
 
-**解决方案**
+* normal：默认值。动画应该正常播放。
 
-方案 1：
+* alternate：动画应该轮流反向播放。
 
-```js
-// 利用watch
-watch() {
-  // 异步获取数据更新时，需要进行高亮、展开节点更新
-  menuData() {
-    this.$nextTick(() => {
-      this.$refs.menu.updateActiveName();
-      this.$refs.menu.updateOpened();
-    });
-  },
-  activeName(value) {
-    this.$nextTick(() => {
-      this.$refs.menu.updateActiveName();
-    });
-  },
-  openNames(value) {
-    this.$nextTick(() => {
-      this.$refs.menu.updateOpened();
-    });
+**进度条示例**
+
+今天看项目代码，发现了一个进度条使用了animation动画，感觉很有意思，就收纳下来啦😍
+
+```css
+.download-progress {
+  width: 150px;
+  line-height: 15px;
+  height: 15px;
+  background: linear-gradient(45deg,
+    #007DFF 10%,
+    #a4cae7 20%,
+    #007DFF 30%,
+    #a4cae7 40%,
+    #007DFF 50%,
+    #a4cae7 60%,
+    #007DFF 70%,
+    #a4cae7 80%,
+    #007DFF 90%,
+    #a4cae7 100%);
+  border-radius: 15px;
+  border: 1px #93d4ff solid;
+  background-size: 200% 100%;
+  animation: dynamics 3s linear infinite;
+  -webkit-animation: dynamics 3s linear infinite;
+  -moz-animation: dynamics 3s linear infinite;
+  overflow: hidden;
+  text-align: right;
+
+@keyframes dynamics {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
   }
 }
 ```
 
-方案 2：
+**以及一个好玩的示例**
 
-`<Menu v-if="menuData.length !== 0"/>`
-
-### 滚动进度条核心代码
-
-::: tip 原理
-视口滚动的距离 / (文档总高度 - 视口高度)
-:::
-
-```js
-// jq
-($(window).scrollTop() / ($(document).height() - $(window).height())) * 100;
-
-// js
-const { scrollTop, scrollHeight, clientHeight } = document.scrollingElement;
-(scrollTop / (scrollHeight - clientHeight)) * 100;
+```html
+<div style="width: 100%;height: 100%;">
+  <p id="animated_div">CSS3 动画</p>
+</div>
 ```
+```css
+#animated_div
+	{
+	  width:60px;
+	  height:40px;
+	  background:#92B901;
+	  position:relative;
+	  -webkit-animation: animated_div 5s infinite;
+	}
 
+@keyframes animated_div
+	{
+	  0%		{transform: rotate(0deg);left:0px;}
+	  25%		{transform: rotate(20deg);left:0px;}
+	  50%		{transform: rotate(0deg);left:500px;}
+	  55%		{transform: rotate(0deg);left:500px;}
+	  70%		{transform: rotate(0deg);left:500px;background:#1ec7e6;}
+	  100%	{transform: rotate(-360deg);left:0px;}
+	}
+```
 
 
 <ToTop/>

@@ -28,15 +28,7 @@ module.exports = {
           title: "日常记录",
           collapsable: true,
           children: [
-            "",
-            "2018"
-          ]
-        },
-        {
-          title: "arcgis",
-          collapsable: false,
-          children: [
-            "arcgis"
+            ""
           ]
         }
       ],
