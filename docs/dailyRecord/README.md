@@ -4,59 +4,40 @@
 
 ### arcgis API 中renderer类的使用
 
-#### BlendRenderer（混合渲染）
+#### SimpleRenderer（简单渲染）
 
-```
-require(["esri/renderers/BlendRenderer"], function(BlendRenderer) { /* code goes here */ });
+```js
+require(["esri/renderers/SimpleRenderer"], function(SimpleRenderer) { /* code goes here */ });
 ```
 
-使用场景：
-对于存在两个或以上具有相互竞争的属性字段，使用混合渲染可以给每个属性都分配有唯一的颜色，并根据属性字段值的大小计算出相应的透明度，最后进行颜色混合。所以，属性值越高，颜色越占优势。
+使用场景:
+给图层的要素统一设置固定的渲染方案
 
 **API 3.28**
-BlendRenderer常用属性介绍：
+SimpleRenderer常用属性介绍：
+
 值|类型|描述
 -|-|-
-blendMode|String|决定颜色是如何混合在一起
-fields|Object[]|不同属性对应的颜色
-opacityStops|Object[]|值占比与透明度对应的设置
-normalizationField|String| 几个竞争字段的总计值
-symbol |Symbol|对应的渲染符号
+symbol|Symbol|渲染的符号
+visualVariables|Object[]|设置颜色，透明度，大小，和旋转度
 
-关于blendMode更多信息，参考：
-https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation#Types
 
-案例：
+使用案例：
 ```js
-var blendRendererOptions = {
-  blendMode: "darken", 
-  symbol: new SimpleFillSymbol().setOutline(new SimpleLineSymbol().setWidth(1)),
-  fields: [
-    {
-      field: "VALUE1",
-      color: new Color([230, 0, 0])
-    }, {
-      field: "VALUE2",
-      color: new Color([56, 168, 0])
-    }
-  ],
-  opacityStops: [
-    {
-      value: 0,
-      opacity: 0
-    },
-    {
-      value: 1,
-      opacity: 1
-    }
-  ],
-  normalizationField: "Total"
-};
+var renderer = new SimpleRenderer(symbol);
 
-renderer = new BlendRenderer(blendRendererOptions);
+renderer.setVisualVariables([{
+    type: "sizeInfo",
+    field: "field",
+    minSize: 5,
+    maxSize: 50,
+    minDataValue: 50,
+    maxDataValue: 1000
+  }]);
 ```
 
-注：在4.11的API中暂无该渲染功能
+值得注意的是：
+动态图层（ArcGISDynamicMapServiceLayer）中的LayerDrawingOptions属性设置visualVariables是无效的，会被忽略
 
 #### ClassBreaksRenderer（分级渲染）
 
@@ -71,7 +52,7 @@ require(["esri/renderers/ClassBreaksRenderer"], function(ClassBreaksRenderer) { 
 ClassBreaksRenderer常用属性介绍：
 值|类型|描述
 -|-|-
-attributeField|String|渲染器匹配的属性字段（计算方法）
+attributeField|String|渲染器匹配的属性字段
 defaultSymbol |Symbol|无法匹配值或中断时使用的默认符号。
 infos|Object[]|分级渲染配置
 isMaxInclusive|Boolean|分级渲染值上包含（默认true）
@@ -115,15 +96,14 @@ require(["esri/renderers/UniqueValueRenderer"], function(UniqueValueRenderer) { 
 UniqueValueRenderer常用属性介绍：
 值|类型|描述
 -|-|-
-attributeField|String|渲染器匹配的属性字段（计算方法）
+attributeField|String|渲染器匹配的属性字段
 defaultSymbol |Symbol|无法匹配值或中断时使用的默认符号。
 fieldDelimiter|String|如果指定了多个属性字段，值之间的分隔符
 infos|Object[]|唯一值渲染配置
 valueExpression|String|一个Arcade表达式，其值为字符串或数字。
 visualVariables|Object[]|设置颜色，透明度，大小，和旋转度
 
-valueExpression使用介绍：
-http://localhost/arcgis_js_v328_sdk/arcgis_js_api/sdk/jssamples/renderer_arcade.html
+- [valueExpression使用介绍](http://localhost/arcgis_js_v328_sdk/arcgis_js_api/sdk/jssamples/renderer_arcade.html)
 
 使用案例：
 ```js
@@ -155,6 +135,97 @@ var Options = {
   uniqueValueRenderer.addValue({ value: "attributeField4", symbol: createSymbol("#7eb0d5"), label: "Soybeans" });
 ```
 
+#### BlendRenderer（混合渲染）
+
+```
+require(["esri/renderers/BlendRenderer"], function(BlendRenderer) { /* code goes here */ });
+```
+
+使用场景：
+对于存在两个或以上具有相互竞争的属性字段，使用混合渲染可以给每个属性都分配有唯一的颜色，并根据属性字段值的大小计算出相应的透明度，最后进行颜色混合。所以，属性值越高，颜色越占优势。
+
+**API 3.28**
+BlendRenderer常用属性介绍：
+值|类型|描述
+-|-|-
+blendMode|String|决定颜色是如何混合在一起
+fields|Object[]|不同属性对应的颜色
+opacityStops|Object[]|值占比与透明度对应的设置
+normalizationField|String| 几个竞争字段的总计值
+symbol |Symbol|对应的渲染符号
+
+- [关于blendMode更多信息](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation#Types)
+
+
+
+案例：
+```js
+var blendRendererOptions = {
+  blendMode: "darken", 
+  symbol: new SimpleFillSymbol().setOutline(new SimpleLineSymbol().setWidth(1)),
+  fields: [
+    {
+      field: "VALUE1",
+      color: new Color([230, 0, 0])
+    }, {
+      field: "VALUE2",
+      color: new Color([56, 168, 0])
+    }
+  ],
+  opacityStops: [
+    {
+      value: 0,
+      opacity: 0
+    },
+    {
+      value: 1,
+      opacity: 1
+    }
+  ],
+  normalizationField: "Total"
+};
+
+renderer = new BlendRenderer(blendRendererOptions);
+```
+
+注：在4.11的API中暂无该渲染功能
+
+#### HeatmapRenderer（热力图渲染）
+
+```js
+require(["esri/renderers/HeatmapRenderer"], function(HeatmapRenderer) { /* code goes here */ });
+```
+
+使用场景:
+在点要素的渲染中，通过根据每个点的位置，以及其影响的范围，并且互相叠加，渲染成一幅热力图。
+
+**API 3.28**
+HeatmapRenderer常用属性介绍：
+
+值|类型|描述
+-|-|-
+blurRadius|Number|每个点的影像范围（以像素为单位）。
+colorStops|Object[]|按比例去描述渲染器的颜色渐变。
+colors|String[]|描述渲染器的颜色渐变。
+field|String|用于热力点加权的属性字段。
+maxPixelIntensity|Number|在色带中为最终颜色分配的像素强度值。
+minPixelIntensity|Number|在色带中为初始强度分配的像素强度值。（一般大于零）
+
+
+使用案例：
+```js
+var heatmapRenderer = new HeatmapRenderer({
+  field: "Magnitude",
+  blurRadius: 12,
+  colorStops: [
+    { ratio: 0, color: "rgba(250, 0, 0, 0)" },
+    { ratio: 0.6, color: "rgb(250, 0, 0)" },
+    { ratio: 0.85, color: "rgb(250, 150, 0)"},
+    { ratio: 0.95, color: "rgb(255, 255, 0)"}],
+  maxPixelIntensity: 100,
+  minPixelIntensity: 10
+});
+```
 
 #### DotDensityRenderer（点密度渲染）
 
@@ -197,43 +268,6 @@ new DotDensityRenderer({
 -|-|-
 dotBlendingEnabled|Boolean|当设置了多个fields的时候，颜色是覆盖还是叠加
 referenceScale|Number|渲染器将根据使用calculateDotValue（）方法根据地图比例的变化线性地重新计算点值，也即是dotValue
-
-#### HeatmapRenderer（热力图渲染）
-
-```js
-require(["esri/renderers/HeatmapRenderer"], function(HeatmapRenderer) { /* code goes here */ });
-```
-
-使用场景:
-在点要素的渲染中，通过根据每个点的位置，以及其影响的范围，并且互相叠加，渲染成一幅热力图。
-
-**API 3.28**
-HeatmapRenderer常用属性介绍：
-
-值|类型|描述
--|-|-
-blurRadius|Number|每个点的影像范围（以像素为单位）。
-colorStops|Object[]|按比例去描述渲染器的颜色渐变。
-colors|String[]|描述渲染器的颜色渐变。
-field|String|用于热力点加权的属性字段。
-maxPixelIntensity|Number|在色带中为最终颜色分配的像素强度值。
-minPixelIntensity|Number|在色带中为初始强度分配的像素强度值。（一般大于零）
-
-
-使用案例：
-```js
-var heatmapRenderer = new HeatmapRenderer({
-  field: "Magnitude",
-  blurRadius: 12,
-  colorStops: [
-    { ratio: 0, color: "rgba(250, 0, 0, 0)" },
-    { ratio: 0.6, color: "rgb(250, 0, 0)" },
-    { ratio: 0.85, color: "rgb(250, 150, 0)"},
-    { ratio: 0.95, color: "rgb(255, 255, 0)"}],
-  maxPixelIntensity: 100,
-  minPixelIntensity: 10
-});
-```
 
 #### ScaleDependentRenderer（不同比例尺不同渲染）
 
@@ -292,40 +326,17 @@ view.watch("scale", function(newValue) {
     layer.renderer = newValue <= 5000000 ? simpleRenderer : heatmapRenderer;
 });
 ```
-同理，在3.x的API同样........
-
-#### SimpleRenderer（简单渲染）
-
+同理，在3.x的API同样可以使用这个方法
 ```js
-require(["esri/renderers/SimpleRenderer"], function(SimpleRenderer) { /* code goes here */ });
+map.on("zoom-end", function (e) {
+  var Scale = map.getScale();
+  if (Scale<300000) {
+    layer.setRenderer(renderer1);
+  } else {
+    layer.setRenderer(renderer2);
+  }
+});
 ```
-
-使用场景:
-给图层的要素统一设置固定的渲染方案
-
-**API 3.28**
-SimpleRenderer常用属性介绍：
-
-值|类型|描述
--|-|-
-symbol|Symbol|渲染的符号
-visualVariables|Object[]|设置颜色，透明度，大小，和旋转度
-
-
-使用案例：
-```js
-var renderer = new SimpleRenderer(symbol);
-
-renderer.setVisualVariables([{
-    type: "sizeInfo",
-    field: "field",
-    minSize: 5,
-    maxSize: 50,
-    minDataValue: 50,
-    maxDataValue: 1000
-  }]);
-```
-
 
 ## 十月
 

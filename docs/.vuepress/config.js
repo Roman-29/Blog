@@ -60,6 +60,6 @@ module.exports = {
       ]
     },
     lastUpdated: "Last Updated",
-    sidebarDepth: 2
+    sidebarDepth: 3
   }
 }
