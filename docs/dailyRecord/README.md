@@ -189,8 +189,6 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 
 <img :src="('/images/跨域/请求头Origin.png')">
 
-![git 常用命令](../.vuepress/public/images/跨域/请求头Origin.png)
-
 ![git 常用命令](/images/跨域/请求头Origin.png)
 
 服务器：诶，你是谁，我来看看你的origin，嗯嗯，可以，符合我的要求，放行！顺便告诉你，老夫的规矩！
