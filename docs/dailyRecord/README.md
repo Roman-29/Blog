@@ -187,13 +187,11 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 
 浏览器：诶，你小子要跨域是吧，我得问问服务器大哥肯不肯！往请求头添加origin亮一下牌面。
 
-<img :src="('/images/跨域/请求头Origin.png')">
-
-![git 常用命令](/images/跨域/请求头Origin.png)
+![image](../.vuepress/public/images/kuayu/requestHeader.png)
 
 服务器：诶，你是谁，我来看看你的origin，嗯嗯，可以，符合我的要求，放行！顺便告诉你，老夫的规矩！
 
-<img :src="('/images/跨域/返回头.png')">
+![image](../.vuepress/public/images/kuayu/responseHeader.png)
 
 `Access-Control-Allow-Origin`有多种设置方法：
 * 设置*是最简单粗暴的，但是服务器出于安全考虑，肯定不会这么干，而且，如果是*的话，游览器将不会发送cookies.即使你的XHR设置了withCredentials
@@ -309,17 +307,17 @@ export default {
 
 打开https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cookie，在f12控制台里window.open页面：https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers，访问返回的window对象的document属性，发现能够访问成功，如下图：
 
-<img :src="('/images/跨域/同源页面.jpg')">
+![image](../.vuepress/public/images/kuayu/Same-origin.jpg)
 
 * 2.访问协议、端口号一致，域名不一致，但具有相同上级域名的页面
 
 打开id.qq.com，f12打开控制台，window.open页面: www.qq.com，同样访问返回的window对象的document属性，发现访问失败，提示被阻止访问跨域的窗体：
 
-<img :src="('/images/跨域/被阻止访问跨域.jpg')">
+![image](../.vuepress/public/images/kuayu/cross-originFailed.jpg)
 
 这个时候分别打印id.qq.com的document.domain和www.qq.com的document.domain，发现前者是id.qq.com，而后者是qq.com，这时我们手动设置一下id.qq.com页面的document.domain，设置为qq.com，再次访问www.qq.com的window对象的document，发现访问成功：
 
-<img :src="('/images/跨域/访问成功.jpg')">
+![image](../.vuepress/public/images/kuayu/accessSuccessful.jpg)
 
 #### 3.canvas操作图片的跨域问题
 
@@ -338,7 +336,7 @@ img.setAttribute("crossOrigin", "Anonymous");
 
 关于 crossOrigin，我们看看 MDN 的解释。
 
-<img :src="('/images/跨域/crossOrigin.jpg')">
+![image](../.vuepress/public/images/kuayu/crossOrigin.jpg)
 
 这段话，用我自己的理解来解释一下：
 
@@ -800,6 +798,7 @@ animation-direction
 	}
 ```
 效果如下：
-<img :src="('/images/CSS3 animation（动画）属性/GIF.gif')">
+
+<img :src="('/images/CSS3 animation/GIF.gif')">
 
 <ToTop/>
