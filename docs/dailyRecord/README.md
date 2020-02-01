@@ -1,5 +1,183 @@
 # 2019
 
+## 十二月
+
+### Arcgis API 事件
+
+#### esri/layers/Layer的事件
+
+esri/layers/Layer是所有图层类的父类
+
+当一个layer添加到map后会实例化一个esri/views/layers/LayerView。
+LayerView表示将单个图层添加到MapView或SceneView后的视图。
+
+图层是Map的最基本组成部分。其拥有的事件有：
+
+事件名|说明|返回值
+-|-|-
+layerview-create|在创建图层的LayerView并在视图中呈现后触发。|{ <br> view: View,<br>layerView: LayerView,<br>target: Layer<br>}
+layerview-destroy|在图层的LayerView被销毁且不再在视图中渲染之后触发。|{ <br> view: View,<br>layerView: LayerView,<br>target: Layer<br>}
+
+#### esri/views/View的事件
+
+View是MapView和SceneView的父类
+
+事件名|说明
+-|-
+鼠标点击事件|一般为鼠标左键的操作
+click|鼠标点击
+immediate-click|不受双击事件影响，鼠标左键后马上触发  
+double-click|双击事件
+hold|在短时间内按住鼠标按钮后触发。
+mouse-wheel|鼠标滚轮在视图上滚动时触发
+pointer-down|当鼠标按钮被按下，或者手指触碰到显示屏时触发。
+pointer-up|释放鼠标按钮或显示触摸结束后触发。
+---|---
+鼠标移动事件|鼠标移动触发的事件
+drag|拖拽事件 
+blur|当浏览器焦点从view中移开时触发。
+focus|当浏览器的焦点在view上时触发。
+pointer-enter|在鼠标光标进入视图，或手指触摸开始后触发。
+pointer-leave|在鼠标离开视图，或手指触摸结束后触发。
+pointer-move|在鼠标或手指移动后触发。   提示框跟随
+---|---
+其他事件|
+resize|当view的dom元素的大小改变时触发。 
+key-down|按下键盘键后触发
+key-up|释放键盘键后触发。
+layerview-create|在每个图层都有相应的LayerView创建并在视图中呈现后触发。
+layerview-destroy|在一个LayerView被销毁并且不再在视图中呈现后触发
+
+#### 3.19与4.9的区别
+
+在3.19中
+**esri/layers/layer** 类有
+refresh-interval-change/scale-range-change/scale-visibility-change/opacity-change/visibility-change
+**esri/map** 类有
+basemap-change/extent-change/time-extent-change
+
+这些xxx-change的事件在4.9都移除了，如果想达到3.19这些事件的效果，只需要watch监听一下对应的xxx属性变化就好。（4.9不局限于上面提到的属性，layer和map的所有属性都可以监听）
+
+例如，现在要监听地图的比例尺
+```js
+view.watch("scale",
+  (newValue, oldValue, property, object) => {
+    console.log("回调函数有4个参数，新值，旧值，属性名称，发起事件的对象")
+  }
+);
+```
+
+#### 其他4.9中没有的3.19事件
+
+**esri/map**类：
+
+事件名|说明
+-|-
+load|当第一个图层或基础图层已成功添加到地图时触发。
+before-unload|地图被销毁之前会触发事件。
+layer-reorder|当地图层顺序改变时触发。
+reposition|当地图DIV被重新定位时触发。
+
+在4.9中没有对应的事件或属性
+
+事件名|说明
+-|-
+layer-add|每当将图层添加到地图时都会触发。
+layer-add-result|在将指定图层添加到地图后触发。
+layer-remove|图层被删除时触发。
+
+可以用**esri/layers/Layer**类的事件替代：
+layerview-create
+layerview-destroy
+
+事件名|说明
+-|-
+layer-resume|当地图层恢复绘制时触发。
+layer-suspend|当地图层暂停绘图时触发。
+update-start|当一个或多个图层开始更新其内容时触发。
+update-end|当一个或多个图层完成更新其内容时触发。
+
+可以监听**esri/views/layers/LayerView**类的属性替代：
+属性名|说明
+-|-
+suspended|如果图层已暂停绘图时，值为true
+updating|图层更新时值为true
+
+事件名|说明
+-|-
+pan-start/pan/pan-end|地图拖拽平移时触发
+zoom-start/zoom/zoom-end|地图的缩放级别变化时触发
+
+不管对地图是拖拽平移还是缩放，地图范围肯定是变化了的，可以通过监听**esri/views/View**对象的extent属性，变向达到3.19中这些事件的效果。
+
+**esri/layers/Layer**类：
+
+事件名|说明
+-|-
+load|加载图层完成后触发
+error|加载图层错误时触发
+resume|当图层恢复绘制时触发。
+suspend|当一个层暂停绘图时触发。
+update|每当图层完成加载或更新自身时触发。
+update-start|当图层开始更新其内容时触发。
+update-end|当一个层完成其内容更新时触发。
+
+可以监听**esri/views/layers/LayerView**类的属性替代：
+属性名|说明
+-|-
+loaded|是否已加载图层
+loadStatus|加载操作的状态 默认值:not-loaded
+loadError|如果加载时发生错误，则返回Error对象
+suspended|如果图层已暂停绘图时，值为true
+updating|图层更新时值为true
+
+### HTTP请求与响应
+
+#### HTTP简介
+
+HTTP协议工作于客户端-服务端架构上。浏览器作为HTTP客户端通过URL向HTTP服务端即WEB服务器发送所有请求。Web服务器根据接收到的请求后，向客户端发送响应信息。
+
+#### HTTP三点注意事项：
+
+* **HTTP是无连接**：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
+
+* **HTTP是媒体独立的**：这意味着，只要客户端和服务器知道如何处理的数据内容，任何类型的数据都可以通过HTTP发送。客户端以及服务器指定使用适合的MIME-type内容类型。
+
+* **HTTP是无状态**：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+
+#### 客户端请求消息
+
+客户端发送一个HTTP请求到服务器的请求消息包括以下格式：请求行（request line）、请求头部（header）、空行和请求数据四个部分组成，下图给出了请求报文的一般格式。
+
+![image](../.vuepress/public/images/HTTP/request.png)
+
+**常见的HTTP请求头属性**
+
+协议头|说明|示例
+-|-|-
+Accept|告诉服务端，客户端接受什么类型的响应。值可以为一个或多个MIME类型的值|如Accept:text/plain只能接受纯文本数据
+Cookie|由服务器通过Set-Cookie设置的一个HTTP协议Cookie|JSESSIONID=luojw; loginstate=1
+Origin|标识跨域资源请求(匹配服务端设置Access-Control-Allow-Origin响应字段)|Origin: http://www.example.com
+Cache-Control|缓存机制|https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control
+Connection|决定当前的事务完成后，是否会关闭网络连接。|如果该值是“keep-alive”，网络连接就是持久的，不会关闭，使得对同一个服务器的请求可以继续在该连接上完成。
+
+#### 服务器响应消息
+
+响应报文由三个部分组成(响应行,响应头,响应体)，如图：
+
+![image](../.vuepress/public/images/HTTP/response.png)
+
+**常见的HTTP响应头属性**
+
+协议头|说明|示例
+-|-|-
+Access-Control-Allow-Origin|指定哪些网站可以跨域源资源共享|Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials|允许传入cookie|Access-Control-Allow-Credentials:true
+Content-Type|	当前内容的MIME类型|https://www.runoob.com/http/http-content-type.html
+
+全部参数，请参考:
+https://blog.csdn.net/xiaochengyihe/article/details/80910913
+
 ## 十一月
 
 ### 什么是前端跨域以及作用
@@ -38,6 +216,7 @@ http://news.company.com/dir/other.html|失败|不同域名 ( news和store )
 **没有同源策略限制的Dom查询**
 
 1.有一天你刚睡醒，收到一封邮件，说是你的银行账号有风险，赶紧点进www.yinghang.com改密码。你吓尿了，赶紧点进去，还是熟悉的银行登录界面，你果断输入你的账号密码，登录进去看看钱有没有少了。
+
 2.睡眼朦胧的你没看清楚，平时访问的银行网站是www.yinhang.com，而现在访问的是www.yinghang.com，这个钓鱼网站做了什么呢？
 
 ```
@@ -194,7 +373,10 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 ![image](../.vuepress/public/images/kuayu/responseHeader.png)
 
 `Access-Control-Allow-Origin`有多种设置方法：
-* 设置*是最简单粗暴的，但是服务器出于安全考虑，肯定不会这么干，而且，如果是*的话，游览器将不会发送cookies.即使你的XHR设置了withCredentials
+* 设置"\*"是最简单粗暴的，但是服务器出于安全考虑，肯定不会这么干，而且，如果是"\*"的话，游览器将不会发送cookies.即使你的XHR设置了withCredentials。报错信息如图：
+
+![image](../.vuepress/public/images/kuayu/Access-Control-Allow-Origin.png)
+
 * 指定域，如上图中的http://172.20.0.206
 
 `withCredentials`：表示XHR是否接收cookies和发送cookies，也就是说如果该值是false，响应头的`Set-Cookie`，浏览器也不会理，并且即使有目标站点的cookies，浏览器也不会发送。
