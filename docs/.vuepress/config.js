@@ -7,8 +7,8 @@ module.exports = {
   ],
   themeConfig: {
     nav: [
-      { text: "📝日常记录", link: "/dailyRecord/" },
-      { text: "📚笔记分类", link: "/classify/" },
+      { text: "📚学习总结", link: "/dailyRecord/" },
+      // { text: "📚笔记分类", link: "/classify/" },
       { text: "📌书签整理", link: "/bookmark/" },
       { text: "✔️编码规范&协同开发", link: "/lint/" },
       {
@@ -60,6 +60,6 @@ module.exports = {
       ]
     },
     lastUpdated: "Last Updated",
-    sidebarDepth: 3
+    sidebarDepth: 5
   }
 }
