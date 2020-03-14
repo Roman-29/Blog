@@ -25,10 +25,31 @@ module.exports = {
     sidebar: {
       "/dailyRecord/": [
         {
-          title: "日常记录",
+          title: "前端模块化",
           collapsable: true,
           children: [
-            ""
+            "qdmkh","webpack"
+          ]
+        },
+        {
+          title: "前端疑难杂症",
+          collapsable: true,
+          children: [
+            "HTTP","CrossDomain"
+          ]
+        },
+        {
+          title: "GIS",
+          collapsable: true,
+          children: [
+            "ArcgisAPI"
+          ]
+        },
+        {
+          title: "CSS",
+          collapsable: true,
+          children: [
+            "CSS"
           ]
         }
       ],
@@ -50,16 +71,9 @@ module.exports = {
           collapsable: false,
           children: ["", "backend", "tool"]
         }
-      ],
-      "/classify/": [
-        {
-          title: "书签整理",
-          collapsable: false,
-          children: [""]
-        }
       ]
     },
     lastUpdated: "Last Updated",
-    sidebarDepth: 5
+    sidebarDepth: 2
   }
 }
