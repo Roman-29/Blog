@@ -770,10 +770,220 @@ npm install babel-runtime -save
 "plugins": ["transform-runtime"]
 ```
 
+### 为单页应用生成 HTML
 
+在实际项目中，一个页面常常有很多资源要加载。接下来举一个实战中的例子，要求如下：
 
+1. 项目采用 ES6 语言加 React 框架。
+2. 给页面加入 Google Analytics，这部分代码需要内嵌进 HEAD 标签里去。
+3. 给页面加入 Disqus 用户评论，这部分代码需要异步加载以提升首屏加载速度。
+4. 压缩和分离 JavaScript 和 CSS 代码，提升加载速度。
 
-<!-- ## 优化
+推荐一个用于方便的解决以上问题的 Webpack 插件 web-webpack-plugin，首先，修改 Webpack 配置为如下：
+
+```js
+const path = require('path');
+const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+const { WebPlugin } = require('web-webpack-plugin');
+
+module.exports = {
+  entry: {
+    app: './main.js'// app 的 JavaScript 执行入口文件
+  },
+  output: {
+    filename: '[name]_[chunkhash:8].js',// 给输出的文件名称加上 Hash 值
+    path: path.resolve(__dirname, './dist'),
+  },
+  module: {
+    ...
+  },
+  plugins: [
+    // 使用本文的主角 WebPlugin，一个 WebPlugin 对应一个 HTML 文件
+    new WebPlugin({
+      template: './template.html', // HTML 模版文件所在的文件路径
+      filename: 'index.html' // 输出的 HTML 的文件名称
+    }),
+    new DefinePlugin({
+      // 定义 NODE_ENV 环境变量为 production，以去除源码中只有开发时才需要的部分
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+    // 压缩输出的 JavaScript 代码
+    new UglifyJsPlugin({
+      // 最紧凑的输出
+      beautify: false,
+      // 删除所有的注释
+      comments: false,
+      compress: {
+        // 在UglifyJs删除没有用到的代码时不输出警告
+        warnings: false,
+        // 删除所有的 `console` 语句，可以兼容ie浏览器
+        drop_console: true,
+        // 内嵌定义了但是只用到一次的变量
+        collapse_vars: true,
+        // 提取出出现多次但是没有定义成变量去引用的静态值
+        reduce_vars: true,
+      }
+    }),
+    ...
+  ],
+};
+```
+
+可以看到WebPlugin指定了一个template文件，为HTML 模版文件，内容如下：
+
+```html
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!--注入 Chunk app 中的 CSS-->
+  <link rel="stylesheet" href="app?_inline">
+  <!--注入 google_analytics 中的 JS 代码-->
+  <script src="./google_analytics.js?_inline"></script>
+  <!--异步加载 Disqus 评论-->
+  <script src="https://dive-into-webpack.disqus.com/embed.js" async></script>
+</head>
+<body>
+  <div id="app"></div>
+  <!--导入 Chunk app 中的 JS-->
+  <script src="app"></script>
+  <!--Disqus 评论容器-->
+  <div id="disqus_thread"></div>
+</body>
+</html>
+```
+
+该文件描述了哪些资源需要被以何种方式加入到输出的 HTML 文件中。
+
+以 `<link rel="stylesheet" href="app?_inline"> `为例，按照正常引入 CSS 文件一样的语法来引入 Webpack 生产的代码。 `href` 属性中的 `app?_inline` 可以分为两部分，前面的 `app` 表示 CSS 代码来自名叫 `app` 的 Chunk 中，后面的 `_inline` 表示这些代码需要被内嵌到这个标签所在的位置。
+
+也就是说资源链接 URL 字符串里问号前面的部分表示资源内容来自哪里，后面的 querystring 表示这些资源注入的方式。
+
+除了 _inline 表示内嵌外，还支持以下属性：
+
+* _dist 只有在生产环境下才引入该资源
+* _dev 只有在开发环境下才引入该资源
+* _ie 只有IE浏览器才需要引入的资源，通过` [if IE]>resource<![endif] `注释实现
+这些属性之间可以搭配使用，互不冲突。例如` app?_inline&_dist `表示只在生产环境下才引入该资源，并且需要内嵌到 HTML 里去。
+
+### 管理多个单页应用
+
+虽然上一节已经解决了自动化生成 HTML 的痛点，但是手动去管理多个单页应用的生成也是一件麻烦的事情。 来继续改造上一节的例子，要求如下：
+
+* 项目目前共有2个单页应用组成，一个是主页 index.html，一个是用户登入页 login.html；
+* 多个单页应用之间会有公共的代码部分，需要把这些公共的部分抽离出来，放到单独的文件中去以防止重复加载。例如多个页面都使用一套 CSS 样式，都采用了 React 框架，这些公共的部分需要抽离到单独的文件中；
+* 随着业务的发展后面可能会不断的加入新的单页应用，但是每次新加入单页应用不能去改动构建相关的代码。
+
+#### 解决方案
+
+上一节中的 `web-webpack-plugin` 插件也内置了解决这个问题的方法，上一节中只使用了它的 `WebPlugin`， 这节将使用它的 `AutoWebPlugin` 来解决以上问题，使用方法非常简单，下面来教你具体如何使用。
+
+项目源码目录结构如下：
+
+```
+├── pages
+│   ├── index
+│   │   ├── index.css // 该页面单独需要的 CSS 样式
+│   │   └── index.js // 该页面的入口文件
+│   └── login
+│       ├── index.css
+│       └── index.js
+├── common.css // 所有页面都需要的公共 CSS 样式
+├── google_analytics.js
+├── template.html
+└── webpack.config.js
+```
+
+从目录结构中可以看成出下几点要求：
+
+* 所有单页应用的代码都需要放到一个目录下，例如都放在 pages 目录下；
+* 一个单页应用一个单独的文件夹，例如最后生成的 index.html 相关的代码都在 index 目录下，login.html 同理；
+* 每个单页应用的目录下都有一个 index.js 文件作为入口执行文件。
+
+>虽然 AutoWebPlugin 强制性的规定了项目部分的目录结构，但从实战经验来看这是一种优雅的目录规范，合理的拆分了代码，又能让新人快速的看懂项目结构，也方便日后的维护。
+
+Webpack 配置文件修改如下：
+
+```js
+const { AutoWebPlugin } = require('web-webpack-plugin');
+
+// 使用本文的主角 AutoWebPlugin，自动寻找 pages 目录下的所有目录，把每一个目录看成一个单页应用
+const autoWebPlugin = new AutoWebPlugin('pages', {
+  template: './template.html', // HTML 模版文件所在的文件路径
+  postEntrys: ['./common.css'],// 所有页面都依赖这份通用的 CSS 样式文件
+  // 提取出所有页面公共的代码
+  commonsChunk: {
+    name: 'common',// 提取出公共代码 Chunk 的名称
+  },
+});
+
+module.exports = {
+  // AutoWebPlugin 会为寻找到的所有单页应用，生成对应的入口配置，
+  // autoWebPlugin.entry 方法可以获取到所有由 autoWebPlugin 生成的入口配置
+  entry: autoWebPlugin.entry({
+    // 这里可以加入你额外需要的 Chunk 入口
+  }),
+  plugins: [
+    autoWebPlugin,
+  ],
+};
+```
+
+`AutoWebPlugin` 会找出 `pages` 目录下的2个文件夹 `index` 和 `login`，把这两个文件夹看成两个单页应用。 并且分别为每个单页应用生成一个 `Chunk` 配置和 `WebPlugin` 配置。 每个单页应用的 `Chunk` 名称就等于文件夹的名称，也就是说 `autoWebPlugin.entry()` 方法返回的内容其实是：
+
+```js
+{
+  "index":["./pages/index/index.js","./common.css"],
+  "login":["./pages/login/index.js","./common.css"]
+}
+```
+
+## 优化
+
+### 区分环境
+
+#### 为什么需要区分环境
+
+在开发网页的时候，一般都会有多套运行环境，例如：
+
+* 在开发过程中方便开发调试的环境。
+* 发布到线上给用户使用的运行环境。
+
+#### 如何区分环境
+
+具体区分方法很简单，在源码中通过如下方式：
+
+```js
+if (process.env.NODE_ENV === 'production') {
+  console.log('你正在线上环境');
+} else {
+  console.log('你正在使用开发环境');
+}
+```
+
+其大概原理是借助于环境变量的值去判断执行哪个分支。
+
+当你的代码中出现了使用 [process](https://nodejs.org/api/process.html) 模块的语句时，Webpack 就自动打包进 process 模块的代码以支持非 Node.js 的运行环境。 当你的代码中没有使用 process 时就不会打包进 process 模块的代码。这个注入的 process 模块作用是为了模拟 Node.js 中的 process，以支持上面使用的 `process.env.NODE_ENV === 'production'` 语句。
+
+在构建线上环境代码时，需要给当前运行环境设置环境变量 `NODE_ENV = 'production'`，Webpack 相关配置如下：
+
+```js
+const DefinePlugin = require('webpack/lib/DefinePlugin');
+
+module.exports = {
+  plugins: [
+    new DefinePlugin({
+      // 定义 NODE_ENV 环境变量为 production
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }),
+  ],
+};
+```
 
 ### 提取公共代码
 
@@ -793,18 +1003,132 @@ npm install babel-runtime -save
 
 #### 如何提取公共代码
 
+你已经知道了提取公共代码会有什么好处，但是在实战中具体要怎么做，以达到效果最优呢？ 通常你可以采用以下原则去为你的网站提取公共代码：
+
+* 根据你网站所使用的技术栈，找出网站所有页面都需要用到的基础库，以采用 React 技术栈的网站为例，所有页面都会依赖 react、react-dom 等库，把它们提取到一个单独的文件。 一般把这个文件叫做 base.js，因为它包含所有网页的基础运行环境；
+* 在剔除了各个页面中被 base.js 包含的部分代码外，再找出所有页面都依赖的公共部分的代码提取出来放到 common.js 中去。
+* 再为每个网页都生成一个单独的文件，这个文件中不再包含 base.js 和 common.js 中包含的部分，而只包含各个页面单独需要的部分代码。
+
 Webpack 内置了专门用于提取多个 Chunk 中公共部分的插件 CommonsChunkPlugin，CommonsChunkPlugin 大致使用方法如下：
 
 ```js
+const path = require('path');
+const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const DefinePlugin = require('webpack/lib/DefinePlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const {AutoWebPlugin} = require('web-webpack-plugin');
 
-new CommonsChunkPlugin({
-  // 从哪些 Chunk 中提取
-  chunks: ['a', 'b'],
-  // 提取出的公共部分形成一个新的 Chunk，这个新 Chunk 的名称
-  name: 'common'
-})
-``` -->
+// AutoWebPlugin自动寻找 pages 目录下的所有目录，把每一个目录看成一个单页应用
+const autoWebPlugin = new AutoWebPlugin('pages', {
+  template: './template.html', // HTML 模版文件所在的文件路径
+  // 提取出所有页面公共的代码
+  commonsChunk: {
+    name: 'common',// 提取出公共代码 Chunk 的名称
+  },
+});
+
+module.exports = {
+  // AutoWebPlugin 会找为寻找到的所有单页应用，生成对应的入口配置，
+  // autoWebPlugin.entry 方法可以获取到生成入口配置
+  entry: autoWebPlugin.entry({
+    // 这里可以加入你额外需要的 Chunk 入口
+    base: './base.js'
+  }),
+  output: {
+    filename: '[name]_[chunkhash:8].js',// 给输出的文件名称加上 hash 值
+    path: path.resolve(__dirname, './dist'),
+  },
+  module: {
+    ...
+  },
+  plugins: [
+    autoWebPlugin,
+    // 为了从 common 中提取出 base 也包含的部分
+    new CommonsChunkPlugin({
+      // 从 common 和 base 两个现成的 Chunk 中提取公共的部分
+      chunks: ['common', 'base'],
+      // 把公共的部分放到 base 中
+      name: 'base'
+    })
+    ...
+  ],
+};
+```
+
+### 分割代码按需加载
+
+#### 为什么需要按需加载
+
+随着互联网的发展，一个网页需要承载的功能越来越多。 对于采用单页应用作为前端架构的网站来说，会面临着一个网页需要加载的代码量很大的问题，因为许多功能都集中的做到了一个 HTML 里。 这会导致网页加载缓慢、交互卡顿，用户体验将非常糟糕。
+
+导致这个问题的根本原因在于一次性的加载所有功能对应的代码，但其实用户每一阶段只可能使用其中一部分功能。 所以解决以上问题的方法就是用户当前需要用什么功能就只加载这个功能对应的代码，也就是所谓的按需加载。
+
+#### 如何使用按需加载
+
+在给单页应用做按需加载优化时，一般采用以下原则：
+
+* 把整个网站划分成一个个小功能，再按照每个功能的相关程度把它们分成几类。
+* 把每一类合并为一个 Chunk，按需加载对应的 Chunk。
+* 对于用户首次打开你的网站时需要看到的画面所对应的功能，不要对它们做按需加载，而是放到执行入口所在的 Chunk 中，以降低用户能感知的网页加载时间。
+* 对于个别依赖大量代码的功能点，例如依赖 Chart.js 去画图表、依赖 flv.js 去播放视频的功能点，可再对其进行按需加载。
+
+被分割出去的代码的加载需要一定的时机去触发，也就是当用户操作到了或者即将操作到对应的功能时再去加载对应的代码。 被分割出去的代码的加载时机需要开发者自己去根据网页的需求去衡量和确定。
+
+由于被分割出去进行按需加载的代码在加载的过程中也需要耗时，你可以预言用户接下来可能会进行的操作，并提前加载好对应的代码，从而让用户感知不到网络加载时间。
+
+#### 用 Webpack 实现按需加载
+
+Webpack 内置了强大的分割代码的功能去实现按需加载，实现起来非常简单。
+
+举个例子，现在需要做这样一个进行了按需加载优化的网页：
+
+* 网页首次加载时只加载 main.js 文件，网页会展示一个按钮，main.js 文件中只包含监听按钮事件和加载按需加载的代码。
+* 当按钮被点击时才去加载被分割出去的 show.js 文件，加载成功后再执行 show.js 里的函数。
+
+其中文件内容如下：
+
+```js
+main.js 
+window.document.getElementById('btn').addEventListener('click', function () {
+  // 当按钮被点击后才去加载 show.js 文件，文件加载成功后执行文件导出的函数
+  import(/* webpackChunkName: "show" */ './show').then((show) => {
+    show('Webpack');
+  })
+});
+```
+
+```js
+show.js
+module.exports = function (content) {
+  window.alert('Hello ' + content);
+};
+```
+
+代码中最关键的一句是` import(/* webpackChunkName: "show" */ './show')`，Webpack 内置了对 `import(*)` 语句的支持，当 Webpack 遇到了类似的语句时会这样处理：
+
+* 以 ./show.js 为入口新生成一个 Chunk；
+* 当代码执行到 import 所在语句时才会去加载由 Chunk 对应生成的文件。
+* import 返回一个 Promise，当文件加载成功时可以在 Promise 的 then 方法中获取到 show.js 导出的内容。
+
+为了正确的输出在 /* webpackChunkName: "show" */ 中配置的 ChunkName，还需要配置下 Webpack，配置如下：
+
+```js
+module.exports = {
+  // JS 执行入口文件
+  entry: {
+    main: './main.js',
+  },
+  output: {
+    // 为从 entry 中配置生成的 Chunk 配置输出文件的名称
+    filename: '[name].js',
+    // 为动态加载的 Chunk 配置输出文件的名称
+    chunkFilename: '[name].js',
+  }
+};
+```
+
+其中最关键的一行是` chunkFilename: '[name].js'`,，它专门指定动态生成的 `Chunk` 在输出时的文件名称。 如果没有这行，分割出的代码的文件名称将会是 `[id].js`。
 
 ## 原理
 
@@ -897,106 +1221,107 @@ failed|如果在编译和输出流程中遇到异常导致 Webpack 退出时，�
 以入门篇的《安装与使用》中打包的bundle.js文件为例
 
 ```js
-          // webpackBootstrap启动函数
-          // modules 即为存放所有模块的数组，数组中的每一个元素都是一个函数
-/******/ (function(modules) { 
-/******/ 	// 安装过的模块都存放在这里面
-          // 作用是把已经加载过的模块缓存在内存中，提升性能
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-          // 去数组中加载一个模块，moduleId 为要加载模块在数组中的 index
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// 如果需要加载的模块已经被加载过，就直接从内存缓存中返回
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// 如果缓存中不存在需要加载的模块，就新建一个模块，并把它存在缓存中
-/******/ 		var module = installedModules[moduleId] = {
-              // 模块在数组中的 index
-/******/ 			i: moduleId,
-              // 该模块是否已经加载完毕
-/******/ 			l: false,
-              // 该模块的导出值
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// 从 modules 中获取 index 为 moduleId 的模块对应的函数
-            // 再调用这个函数，同时把函数需要的参数传入
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// 把这个模块标记为已加载
-/******/ 		module.l = true;
-/******/
-/******/ 		// 返回这个模块的导出值
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// 传入模块对象
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// 传入模块缓存
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// Webpack 配置中的 publicPath，用于加载被分割出去的异步代码
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// 使用 __webpack_require__ 去加载 index 为 0 的模块，并且返回该模块导出的内容
-          // index 为 0 的模块就是 main.js 对应的文件，也就是执行入口模块
-          // __webpack_require__.s 的含义是启动模块对应的 index
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
+// webpackBootstrap启动函数
+// modules 即为存放所有模块的数组，数组中的每一个元素都是一个函数
+(function (modules) {
+  // 安装过的模块都存放在这里面
+  // 作用是把已经加载过的模块缓存在内存中，提升性能
+  var installedModules = {};
+
+  // 去数组中加载一个模块，moduleId 为要加载模块在数组中的 index
+  function __webpack_require__(moduleId) {
+
+    // 如果需要加载的模块已经被加载过，就直接从内存缓存中返回
+    if (installedModules[moduleId]) {
+      return installedModules[moduleId].exports;
+    }
+    // 如果缓存中不存在需要加载的模块，就新建一个模块，并把它存在缓存中
+    var module = installedModules[moduleId] = {
+      // 模块在数组中的 index
+      i: moduleId,
+      // 该模块是否已经加载完毕
+      l: false,
+      // 该模块的导出值
+      exports: {}
+    };
+
+    // 从 modules 中获取 index 为 moduleId 的模块对应的函数
+    // 再调用这个函数，同时把函数需要的参数传入
+    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+    // 把这个模块标记为已加载
+    module.l = true;
+
+    // 返回这个模块的导出值
+    return module.exports;
+  }
+
+
+  // 传入模块对象
+  __webpack_require__.m = modules;
+
+  // 传入模块缓存
+  __webpack_require__.c = installedModules;
+
+  // define getter function for harmony exports
+  __webpack_require__.d = function (exports, name, getter) {
+    if (!__webpack_require__.o(exports, name)) {
+      Object.defineProperty(exports, name, {
+        configurable: false,
+        enumerable: true,
+        get: getter
+      });
+    }
+  };
+
+  // getDefaultExport function for compatibility with non-harmony modules
+  __webpack_require__.n = function (module) {
+    var getter = module && module.__esModule ?
+      function getDefault() {
+        return module['default'];
+      } :
+      function getModuleExports() {
+        return module;
+      };
+    __webpack_require__.d(getter, 'a', getter);
+    return getter;
+  };
+
+  // Object.prototype.hasOwnProperty.call
+  __webpack_require__.o = function (object, property) {
+    return Object.prototype.hasOwnProperty.call(object, property);
+  };
+
+  // Webpack 配置中的 publicPath，用于加载被分割出去的异步代码
+  __webpack_require__.p = "";
+
+  // 使用 __webpack_require__ 去加载 index 为 0 的模块，并且返回该模块导出的内容
+  // index 为 0 的模块就是 main.js 对应的文件，也就是执行入口模块
+  // __webpack_require__.s 的含义是启动模块对应的 index
+  return __webpack_require__(__webpack_require__.s = 0);
+})
 /************************************************************************/
-/******/ ([
+([
 
-// 所有的模块都存放在了一个数组里，根据每个模块在数组的 index 来区分和定位模块
-/* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+  // 所有的模块都存放在了一个数组里，根据每个模块在数组的 index 来区分和定位模块
+  /* 0 */
+  (function (module, exports, __webpack_require__) {
 
-// 通过 __webpack_require__ 规范导入 show 函数，show.js 对应的模块 index 为 1
-const show = __webpack_require__(1);
-// 执行 show 函数
-show('Webpack');
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-// 操作 DOM 元素，把 content 显示到网页上
-function show(content) {
-  window.document.getElementById('app').innerText = 'Hello,' + content;
-}
-
-// 通过 CommonJS 规范导出 show 函数
-module.exports = show;
-
-/***/ })
-/******/ ]);
+    // 通过 __webpack_require__ 规范导入 show 函数，show.js 对应的模块 index 为 1
+    const show = __webpack_require__(1);
+    // 执行 show 函数
+    show('Webpack');
+  }),
+  /* 1 */
+  (function (module, exports) {
+    // 操作 DOM 元素，把 content 显示到网页上
+    function show(content) {
+      window.document.getElementById('app').innerText = 'Hello,' + content;
+    }
+    // 通过 CommonJS 规范导出 show 函数
+    module.exports = show;
+  })
+]);
 ```
 
 以上看上去复杂的代码其实是一个立即执行函数，可以简写为如下：
@@ -1023,7 +1348,286 @@ Webpack 做了缓存优化： 执行加载过的模块不会再执行第二次�
 
 #### 分割代码时的输出
 
-后继补充
+在采用了按需加载的优化方法时，Webpack 的输出文件会发生变化。
+
+例如把源码中的 main.js 修改为如下：
+
+```js
+// 异步加载 show.js
+import('./show').then((show) => {
+  // 执行 show 函数
+  show('Webpack');
+});
+```
+
+重新构建后会输出两个文件，分别是执行入口文件 bundle.js 和 异步加载文件 0.bundle.js。
+
+其中 0.bundle.js 内容如下：
+
+```js
+webpackJsonp([0], {
+  3: (function (module, exports, __webpack_require__) {
+    var __WEBPACK_AMD_DEFINE_RESULT__;
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+        return function (a, b) {
+          return a * b;
+        };
+      }.call(exports, __webpack_require__, exports, module),
+      __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  })
+});
+```
+
+`bundle.js` 内容如下：
+
+```js
+// webpackBootstrap启动函数
+// modules 即为存放所有模块的数组，数组中的每一个元素都是一个函数
+(function (modules) {
+  /***
+   * webpackJsonp 用于从异步加载的文件中安装模块。
+   * 把 webpackJsonp 挂载到全局是为了方便在其它文件中调用。
+   *
+   * @param chunkIds 异步加载的文件中存放的需要安装的模块对应的 Chunk ID
+   * @param moreModules 异步加载的文件中存放的需要安装的模块列表
+   * @param executeModules 在异步加载的文件中存放的需要安装的模块都安装成功后，需要执行的模块对应的 index
+   */
+  var parentJsonpFunction = window["webpackJsonp"];
+  window["webpackJsonp"] = function webpackJsonpCallback(chunkIds, moreModules, executeModules) {
+    // 把 moreModules 添加到 modules 对象中
+    // 把所有 chunkIds 对应的模块都标记成已经加载成功 
+    var moduleId, chunkId, i = 0,
+      resolves = [],
+      result;
+    for (; i < chunkIds.length; i++) {
+      chunkId = chunkIds[i];
+      if (installedChunks[chunkId]) {
+        resolves.push(installedChunks[chunkId][0]);
+      }
+      installedChunks[chunkId] = 0;
+    }
+    for (moduleId in moreModules) {
+      if (Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+        modules[moduleId] = moreModules[moduleId];
+      }
+    }
+    if (parentJsonpFunction) parentJsonpFunction(chunkIds, moreModules, executeModules);
+    while (resolves.length) {
+      resolves.shift()();
+    }
+
+  };
+
+  // 缓存已经安装的模块
+  var installedModules = {};
+
+  // 存储每个 Chunk 的加载状态；
+  // 键为 Chunk 的 ID，值为0代表已经加载成功
+  var installedChunks = {
+    1: 0
+  };
+
+  // 去数组中加载一个模块，moduleId 为要加载模块在数组中的 index
+  function __webpack_require__(moduleId) {
+
+    // 如果需要加载的模块已经被加载过，就直接从内存缓存中返回
+    if (installedModules[moduleId]) {
+      return installedModules[moduleId].exports;
+    }
+    // 如果缓存中不存在需要加载的模块，就新建一个模块，并把它存在缓存中
+    var module = installedModules[moduleId] = {
+      // 模块在数组中的 index
+      i: moduleId,
+      // 该模块是否已经加载完毕
+      l: false,
+      // 该模块的导出值
+      exports: {}
+    };
+
+    // 从 modules 中获取 index 为 moduleId 的模块对应的函数
+    // 再调用这个函数，同时把函数需要的参数传入
+    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+    // 把这个模块标记为已加载
+    module.l = true;
+
+    // 返回这个模块的导出值
+    return module.exports;
+  }
+
+  /**
+   * 用于加载被分割出去的，需要异步加载的 Chunk 对应的文件
+   * @param chunkId 需要异步加载的 Chunk 对应的 ID
+   * @returns {Promise}
+   */
+  __webpack_require__.e = function requireEnsure(chunkId) {
+    // 从上面定义的 installedChunks 中获取 chunkId 对应的 Chunk 的加载状态
+    var installedChunkData = installedChunks[chunkId];
+    // 如果加载状态为0表示该 Chunk 已经加载成功了，直接返回 resolve Promise
+    if (installedChunkData === 0) {
+      return new Promise(function (resolve) {
+        resolve();
+      });
+    }
+
+    // installedChunkData 不为空且不为0表示该 Chunk 正在网络加载中
+    if (installedChunkData) {
+      // 返回存放在 installedChunkData 数组中的 Promise 对象
+      return installedChunkData[2];
+    }
+
+    // installedChunkData 为空，表示该 Chunk 还没有加载过，去加载该 Chunk 对应的文件
+    var promise = new Promise(function (resolve, reject) {
+      installedChunkData = installedChunks[chunkId] = [resolve, reject];
+    });
+    installedChunkData[2] = promise;
+
+    // 通过 DOM 操作，往 HTML head 中插入一个 script 标签去异步加载 Chunk 对应的 JavaScript 文件
+    var head = document.getElementsByTagName('head')[0];
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.charset = 'utf-8';
+    script.async = true;
+    script.timeout = 120000;
+
+    if (__webpack_require__.nc) {
+      script.setAttribute("nonce", __webpack_require__.nc);
+    }
+
+    // 文件的路径为配置的 publicPath、chunkId 拼接而成
+    script.src = __webpack_require__.p + "" + chunkId + ".bundle.js";
+    // 设置异步加载的最长超时时间
+    var timeout = setTimeout(onScriptComplete, 120000);
+    script.onerror = script.onload = onScriptComplete;
+    // 在 script 加载和执行完成时回调
+    function onScriptComplete() {
+      // 防止内存泄露
+      script.onerror = script.onload = null;
+      clearTimeout(timeout);
+      // 去检查 chunkId 对应的 Chunk 是否安装成功，安装成功时才会存在于 installedChunks 中
+      var chunk = installedChunks[chunkId];
+      if (chunk !== 0) {
+        if (chunk) {
+          chunk[1](new Error('Loading chunk ' + chunkId + ' failed.'));
+        }
+        installedChunks[chunkId] = undefined;
+      }
+    };
+    head.appendChild(script);
+
+    return promise;
+  };
+
+  // expose the modules object (__webpack_modules__)
+  __webpack_require__.m = modules;
+
+  // expose the module cache
+  __webpack_require__.c = installedModules;
+
+  // define getter function for harmony exports
+  __webpack_require__.d = function (exports, name, getter) {
+    if (!__webpack_require__.o(exports, name)) {
+      Object.defineProperty(exports, name, {
+        configurable: false,
+        enumerable: true,
+        get: getter
+      });
+    }
+  };
+
+  // getDefaultExport function for compatibility with non-harmony modules
+  __webpack_require__.n = function (module) {
+    var getter = module && module.__esModule ?
+      function getDefault() {
+        return module['default'];
+      } :
+      function getModuleExports() {
+        return module;
+      };
+    __webpack_require__.d(getter, 'a', getter);
+    return getter;
+  };
+
+  // Object.prototype.hasOwnProperty.call
+  __webpack_require__.o = function (object, property) {
+    return Object.prototype.hasOwnProperty.call(object, property);
+  };
+
+  // Webpack 配置中的 publicPath，用于加载被分割出去的异步代码
+  __webpack_require__.p = "./dist/";
+
+  // on error function for async loading
+  __webpack_require__.oe = function (err) {
+    console.error(err);
+    throw err;
+  };
+
+  // 使用 __webpack_require__ 去加载 index 为 0 的模块，并且返回该模块导出的内容
+  // index 为 0 的模块就是 main.js 对应的文件，也就是执行入口模块
+  // __webpack_require__.s 的含义是启动模块对应的 index
+  return __webpack_require__(__webpack_require__.s = 0);
+})
+/************************************************************************/
+([
+  // 所有的模块都存放在了一个数组里，根据每个模块在数组的 index 来区分和定位模块
+  /* 0 */
+  /***/
+  (function (module, __webpack_exports__, __webpack_require__) {
+
+    "use strict";
+    Object.defineProperty(__webpack_exports__, "__esModule", {
+      value: true
+    });
+    /* harmony import */
+    var __WEBPACK_IMPORTED_MODULE_0__vendor_sum__ = __webpack_require__(1);
+    /**
+     * webpack支持ES6、CommonJs和AMD规范
+     */
+
+    // ES6
+
+    console.log("sum(1, 2) = ", Object(__WEBPACK_IMPORTED_MODULE_0__vendor_sum__["a" /* default */ ])(1, 2));
+
+    // CommonJs
+    var minus = __webpack_require__(2);
+    console.log("minus(1, 2) = ", minus(1, 2));
+
+    // AMD
+    __webpack_require__.e /* require */(0).then(function () {
+      var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(3)];
+      (function (multi) {
+        console.log("multi(1, 2) = ", multi(1, 2));
+      }.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));
+    }).catch(__webpack_require__.oe);
+    /***/
+  }),
+  /* 1 */
+  /***/
+  (function (module, __webpack_exports__, __webpack_require__) {
+    "use strict";
+    /* harmony default export */
+    __webpack_exports__["a"] = (function (a, b) {
+      return a + b;
+    });
+    /***/
+  }),
+  /* 2 */
+  /***/
+  (function (module, exports) {
+    module.exports = function (a, b) {
+      return a - b;
+    };
+    /***/
+  })
+]);
+```
+
+这里的 `bundle.js` 和上面所讲的 `bundle.js` 非常相似，区别在于：
+
+* 多了一个 `__webpack_require__.e` 用于加载被分割出去的，需要异步加载的 Chunk 对应的文件
+* 多了一个 `webpackJsonp` 函数用于从异步加载的文件中安装模块。
+
+在使用了 `CommonsChunkPlugin` 去提取公共代码时输出的文件和使用了异步加载时输出的文件是一样的，都会有 `__webpack_require__.e` 和 `webpackJsonp` 。原因在于提取公共代码和异步加载本质上都是代码分割。
 
 ### 关于 Loader
 
@@ -1522,3 +2126,7 @@ module.exports = EndWebpackPlugin;
 ```
 
 从开发这个插件可以看出，找到合适的事件点去完成功能在开发插件时显得尤为重要。 在原理篇的《工作原理概括》 中详细介绍过 Webpack 在运行过程中广播出常用事件，可以从中找到需要的事件。
+
+## 参考资料
+
+ [《深入浅出Webpack》](https://github.com/gwuhaolin/dive-into-webpack/)
