@@ -20,13 +20,73 @@
 
 ### 数据处理
 
+#### 数据格式转换
 
+arcgis工具箱中提供了大量的数据转换工具
+
+![image](../.vuepress/public/images/GISsystem/A_shujuzhuanhuan.png)
+
+supermap同样也支持多格式的数据导入与导出
+
+![image](../.vuepress/public/images/GISsystem/S_shujuzhuanhuan.png)
+
+#### 数据抽取
+
+按位置或按属性进行要素筛选
+
+以arcgis为例，对数据进行筛选操作如下：
+
+![image](../.vuepress/public/images/GISsystem/A_shujushaixuan.png)
+
+**按属性选择**
+
+![image](../.vuepress/public/images/GISsystem/A_shuxingxuanze.png)
+
+如图所示，选择一个图层和筛选的方法，填写SQL语句对图层数据进行筛选
+
+**按位置选择**
+
+![image](../.vuepress/public/images/GISsystem/A_weizhishaixuan.png)
+
+如图所示，选择目标图层和源图层，并确定空间关系，进行要素筛选
+
+#### 数据坐标系
+
+**遇到的问题：**
+
+1. 数据没有坐标系
+2. 多个数据之间坐标系不一致
+3. 数据没有坐标值
+
+**定义投影**
+
+对没有坐标系的数据进行坐标系定义
+
+**投影变换**
+
+对坐标系不一致的数据进行坐标转换
+
+**数据校正**
+
+矢量数据空间校正
+
+栅格数据地理校准
+
+
+
+#### 
 
 ### 质量控制
+
+
 
 ### 地图整饰
 
 ### 数据应用
+
+#### 地图服务 
+
+将地图
 
 ## 数据存储
 
