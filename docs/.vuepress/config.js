@@ -42,7 +42,7 @@ module.exports = {
           title: "GIS",
           collapsable: true,
           children: [
-            "ArcgisAPI","SuperMapWebGL","SuperMapIserver"
+            "ArcgisAPI","GISsystem","SuperMapWebGL","SuperMapIserver"
           ]
         },
         {
