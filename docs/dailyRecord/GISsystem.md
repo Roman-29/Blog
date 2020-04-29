@@ -236,6 +236,7 @@
 用图表的形式反映定位于制图区域的某些点周期性现象的数量特征
 和变化的方法。
 如监测站测量风向风速图
+
 ![image](../.vuepress/public/images/GISsystem/2-6.jpg)
 
 ##### 分级统计图法
@@ -275,9 +276,65 @@
 
 ## 数据管理与存储
 
-### SuperMap
+### GIS数据常见文件格式
 
-SuperMap GIS 的数据组织结构，主要包括工作空间、数据源、数据集、地图、场景、布局等。
+数据类型|常见文件格式
+-|-
+DEM地形数据|tif,dem
+DOM影像数据|tif,img
+矢量数据|shp,kml,geojson,def/dwg
+三维模型|倾斜摄影osgd,人工建模obj,BIM数据dvt/dgn,点云las/ply
+
+#### TIF
+
+TIF文件为栅格图像文件，后缀为tif或tiff, 是ogc规范的一种，全称GeoTiff. 通常不能在资源管理器中查看tif栅格影像数据的坐标系信息，需要用GIS软件查看，因为它的坐标系信息写在数据文件内部。
+
+tif可以有8位，24位等深度，一般真彩色是24位，而地形数据只有一个高度值，采用8位。目前很多卫星影像数据、地形数据的存储式都是tif.
+
+![image](../.vuepress/public/images/GISsystem/3-4.png)
+
+#### SHP
+
+Shapefile文件是ESRI公司ArcGIS平台的常用格式文件，是工业标准的矢量数据文件。
+Shapefile将空间特征表中的非拓扑几何对象和属性信息存储在数据集中，特征表中的几何对象存为以坐标点集表示的图形文件--SHP文件，Shapefile文件并不含拓扑(Topological) 数据结构。
+
+shp的特点：
+
+1. 1个Shape文件包括三个文件:主文件(.shp) ,索引文件(.shx), dBASE表(.dbf)
+
+2. 一个shp文件只能存储点、线、面中的一种类型，不存
+在混合存在的状态
+
+3. shp可以设置很多字段属性
+ 
+#### KML/KMZ
+
+KML(Keyhole Markup Language,Keyhole标记语言)最初是由Google旗下的Keyhole公司开发和维护的一种基于XML的标记语言，利用XML语法格式描述地理空间数据(如点、线、面、多边形和模型等)，适合网络环境下的地理信息协作与共享。
+2008 年4月,KML的最新版本2.2被OGC宣布为开放地理信息编码标准并改由OGC维护和发展。
+
+KMZ文件是压缩过的KML文件。由于KMZ是压缩包，因此，它不仅
+能包含KML文本，也能包含与之关联的如图片、模型等其他文件。
+
+#### DWG/DXF
+
+dwg文件:是Autodesk公司AutoCAD平台的图形文件格式，是二维或三维图形档案。其与dxf文件是可以互相转化的。
+
+dxf文件:是AutoCAD推出与其它软件平台之间进行数据交换的一种开放的矢量数据格式
+
+由于AutoCAD是最流行的CAD系统，DXF也被广泛使用。绝大多数CAD系统都能读入或输出DXF文件。
+
+#### GeoJSON
+
+GeoJSON是适合于Web下对各种地理数据结构进行编码的格式，基于Javascript对象表示法的地理空间信息数据交换格式。与普通json文件格式区别在于 对其属性及组成由一定规范。
+
+GeoJSON将所有的地理要素分为Point、MultiPoint. LineString、MultiLineString、Polygon、MultiPolygon、GeometryCollection 
+首先是将这些要素封装到单个的geometry里，然后作为一个个的Feature 要素放到一个要素集合里构成。
+
+![image](../.vuepress/public/images/GISsystem/3-5.png)
+
+### GIS软件的数据组织结构（SuperMap）
+
+以SuperMap为例。数据组织结构主要包括工作空间、数据源、数据集、地图、场景、布局等。
 
 ![image](../.vuepress/public/images/GISsystem/3-2.png)
 
@@ -370,7 +427,7 @@ SuperMap GIS的数据集类型包括：
 
 使用点符号库设置图层中点的风格，包括符号类型、大小、颜色等；使用线符号库设置图层中线的风格，包括线型、线宽、线的颜色等；使用填充符号库，设置图层中面对象的填充风格。
 
-### ArcGIS 
+### ArcGIS （写的不好，想删掉）
 
 ArcGIS 的数据组织结构，主要包括gdb、mdb
 
@@ -415,6 +472,7 @@ Terrain 数据集是一种多分辨率的基于 TIN 的表面数据结构，它�
 拓扑关系可以为指定的单个或多个要素类执行拓扑规则。例如地块是不能出现交叠的、一个地块不能跨越两个行政区划，建筑物必须在地块之内等，都是一些拓扑规则，这些规则建立后可以作用到这些要素类上，当对这些要素类进行数据编辑的时候，ArcGIS对自动进行拓扑检查。
 
 **关系类**
+
 是一种表（要素类）和另一个表（要素类）之间的联系机制。关系类是有一个表（要素类）指向另一个要素类。当第一个要素类中的数据发生变化后，另一个要素类的数据要会发生变化。例如我们可以把地块和建筑物关联起来，当地块移动的时候，地块内的建筑物可以随着地块自动移动。
 
 ##### 栅格目录
@@ -428,107 +486,187 @@ Terrain 数据集是一种多分辨率的基于 TIN 的表面数据结构，它�
 
 ## 地图服务器
 
-### ArcGIS Server
+### GIS服务
 
+GIS服务是将数据通过Web的方式通过接口暴露封装的GIS功能，提供给客户端应用调用。开发人员通常会接触到服务这个层面的相关使用。
 
-### SuperMap Iserver
+![image](../.vuepress/public/images/GISsystem/4-1.png)
 
-SuperMap iServer 可提供的服务类型如下：
+### ArcGIS Server服务
 
-* REST 服务。基于 REST 的架构以资源形式提供 GIS 功能接口。包含地图功能、数据功能、分析功能、三维功能等。
-* OGC W*S 服务。OGC 标准服务，如 WMS、WFS、WMTS 等。
+常用的服务有MapServer（动态地图服务/切片地图服务），FeatureServer（要素服务）
 
-SuperMap iServer 可以使用多种来源提供的数据来发布上述服务，如 SuperMap 工作空间数据、远程 WMS 服务、远程 WFS 服务、远程 REST Map 服务等。
+#### 动态地图服务
 
-<table>
-    <tr>
-        <td>GIS 功能</td>
-        <td>服务类型</td>
-        <td>服务来源</td>
-    </tr>
-    <tr>
-        <td rowspan="3">地图功能</td>
-        <td>地图 REST 服务</td>
-        <td rowspan="3">SuperMap 工作空间数据、远程 WMS 服务、远程 WMTS 服务、远程 REST Map 服务、超图云服务、Bing Maps 服务、天地图服务、MBTiles 文件等。</td>
-    </tr>
-    <tr>
-        <td>WMS 服务</td>
-    </tr>
-    <tr>
-        <td>WMTS 服务</td>
-    </tr>
-    <tr>
-        <td rowspan="3">数据功能</td>
-        <td>数据 REST 服务</td>
-        <td rowspan="3">SuperMap 工作空间数据、远程 WFS 服务、远程 REST Data 服务。</td>
-    </tr>
-    <tr>
-        <td>WFS 服务</td>
-    </tr>
-    <tr>
-        <td>WCS 服务</td>
-    </tr>
-    <tr>
-        <td rowspan="4">分析功能</td>
-        <td>空间分析 REST 服务</td>
-        <td>SuperMap 工作空间数据，以及 REST SpatialAnalyst 服务。</td>
-    </tr>
-    <tr>
-        <td>交通网络分析 REST 服务</td>
-        <td>SuperMap 工作空间数据，以及 REST TransportationAnalyst 服务。</td>
-    </tr>
-    <tr>
-        <td>交通换乘分析 REST 服务</td>
-        <td>SuperMap 工作空间数据，以及 REST TrafficTransferAnalyst 服务。</td>
-    </tr>
-    <tr>
-        <td>WPS 服务</td>
-        <td>SuperMap 工作空间数据。</td>
-    </tr>
-    <tr>
-        <td rowspan="2">三维功能</td>
-        <td>三维 REST 服务</td>
-        <td>SuperMap 工作空间数据，以及 REST 3D 服务。</td>
-    </tr>
-    <tr>
-        <td>三维网路分析 REST 服务</td>
-        <td>SuperMap 工作空间数据。</td>
-    </tr>
-    <tr>
-        <td>动态标绘功能</td>
-        <td>动态标绘REST服务</td>
-        <td>Plot 文件。</td>
-    </tr>
-</table>
+地图服务器根据请求参数，实时生成地图数据图片
 
-#### 体系结构
+常用的数据有地图范围，显示图层，图片大小。如图：
 
-![image](../.vuepress/public/images/SupermapIserver/tixijiegou.png)
+![image](../.vuepress/public/images/GISsystem/4-3.png)
 
-#### GIS 服务提供者
+#### 切片地图服务
 
-服务提供者（GIS Service Provider）封装并统一了对功能的不同实现，屏蔽了不同服务来源的区别，对于不同的服务来源有不同的服务提供者，例如，用于获取 SuperMap iObjects 提供的 GIS 功能的 UGCMapProvider，用于获取 WMS 服务的 WMSMapProvider 等
+现在越来越多的地图服务用到瓦片技术，基本我们平常所接触的地图的底图都是瓦片地图。瓦片地图金字塔模型是一种多分辨率层次模型，从瓦片金字塔的底层到顶层，分辨率越来越低，但表示的地理范围不变。
 
-#### GIS 服务组件
+![image](../.vuepress/public/images/GISsystem/4-4.png)
 
-GIS 服务组件（GIS Service Component）通过对 GIS 服务提供者（GIS Service Provider）提供的服务能力进行组合，封装成粒度较粗的服务组件。
+##### 切片服务的特点
 
-GIS 服务组件包括通用空间服务（Generic Spatial Service）和领域空间服务（Domain Spatial Service）。
+1. 具有唯一的瓦片等级和瓦片行列编号
+2. 瓦片等级越高，组成地图的瓦片数越多，可以看到的信息越详细
+3. 某一瓦片等级地图的瓦片是由低一级的各瓦片切割成4个瓦片组成，形成了瓦片金字塔
 
-通用空间服务指通常的 GIS 服务，如地图服务、空间数据服务、空间分析服务、网络分析服务等；而领域空间服务则用来描述 GIS 在特定行业中的应用相关的服务，用户通过对通用空间服务的二次开发或配置，添加自己的业务逻辑，就能定制出满足某一行业领域特殊需求的空间服务，进而达到通用空间服务在具体领域的多层次复用。
+![image](../.vuepress/public/images/GISsystem/4-7.png)
 
-例如气象领域，在通用空间服务的基础之上，加上天气预报服务、气象警报服务等，定制出满足气象行业特殊要求的气象领域服务。
+##### 切片服务的相比动态地图服务
 
-#### GIS 服务接口
+1. 由于切片地图服务中的图片不需要服务器实时生成，本身存在服务器的硬盘上，所以大大提高了服务器的性能。
+2. 切片地图服务由于图片事先存在，所以该服务实现的功能有限，例如无法实现隐藏服务中的某个图层。
 
-SuperMap iServer 在服务接口层支持将其按照不同的服务规范发布成网络服务，比如 REST 服务、WMS 服务等。
+##### 切片存储
+
+1. 松散型（未加密）
+
+![image](../.vuepress/public/images/GISsystem/4-5.png)
+
+2. 紧凑型（加密）切片服务的行列号
+
+![image](../.vuepress/public/images/GISsystem/4-6.png)
+
+#### 要素服务
+
+用于发布空间数据库中的要素图层，并支持对图层的要素进行增删查改等操作。
+
+![image](../.vuepress/public/images/GISsystem/4-8.png)
+![image](../.vuepress/public/images/GISsystem/4-9.png)
+
+### GeoServer
+
+通常我们使用GeoServer来发布OGC标准服务，GeoServer（地理信息系统服务器）是OpenGIS Web服务器规范的J2EE实现，利用GeoServer可以方便的发布地图数据。
+
+常见的服务类型有:WMS,WMTS,WFS,WCS
+
+#### Web Map Service (WMS)
+将空间信息以地图形式表现的一种方法。这个规范定义了三个操作：
+
+GetCapabitities、GetMap、GetFeatureInfo。GetCapabitities用于返回服务级元数据；
+
+GetMap 用作返回一个地图影像，这个地图影像的地理参考坐标是已经定义好的；
+
+GetFeatureInfo 是一个可选的参数，它的主要作用是返回一些特殊要素，这些特殊要素是可以在地图上表示出来的。
+
+#### Web Map Tile Service (WMTS)
+WMTS 是 OGC 提出的缓存技术标准。它在服务器端就把地图切割为一定不同级别大小的瓦片。
+这大大降低了服务器端的载荷，使得其压力减轻，这样用户在使用的时候就具有更加的体验效果。
+
+WMTS 因为使用了瓦片矩阵来切割地图，一副地图被切割成了多个瓦片，每个瓦片具有唯一的标识符，这些瓦片具有不同的分辨率，当用户缩放到一定级别后，显示对应级别瓦片数据，一定程度上也降低了客户端的压力。
+
+WMTS 接口支持的三类资源：
+
+1. 服务元数据（ServiceMetadata）资源：介绍对应服务器完成的功能及含有的特定信息。
+
+2. 图块资源代表地图集合中一个图层中表达出的一小块地图信息。
+
+3. 要素信息（FeatureInfo）资源返回了地图中对应图块中特定像素位置上的地物要素的信息。
+
+#### Web Feature Service（WFS）
+
+该服务返回图层级的地图影像。
+
+这个规范定义了五个操作：GetCapabilites、DescribeFeatureType、GetFeature、Transaction、LockFeature 。 
+
+* GetCapabilites 返 回 Web 要 素 服 务 性 能 描 述 文 档 ；
+
+* DescribeFeatureType 用于返回一个 XML 文档，这个文档用于介绍能够提供服务的相关要素的结构；
+
+* GetFeature 返回一个服务，这个服务是地址请求提供的一个要素实例；
+
+* Transaction 为事务请求提供服务；
+
+* LockFeature 是对要素类型实例进行锁定的操作，用于多个事务对同一要素操作时锁定要素实例。
+
+#### Web Coverage Service（WCS）
+
+该服务规范的主要作用是，将含有空间位置的影像数据，在网络上发布共享。
+
+该服务由三种操作组成：GetCapabilities，GetCoverage 和 DescribeCoverageType。
+
+* GetCapabilities 返回描述服务和数据集的XML 文档，它的主要作用是确定查询类型，数据类型以及获取的数据是否具有可操作性后执行；
+
+* GetCoverage 操作是在 GetCapabilities 操作后面执行；
+
+* DescribeCoverageType 根据客户端的操作要求，然后由对应的服务器返回任意一个地图层的完全描述信息。
+
+### 静态资源数据服务
+
+瓦片底图，terrain地形，3dtiles三维模型等一些GIS静态资源数据，除了用GIS服务器来发布以外，也可以直接使用HTTP容器（如IIS,TOMCAT,Nginx,Node等）来发布。
+
+这种方法简单方便，并且服务效率高
+
+### 互联网在线地图服务
+
+近些年，地图应用爆发性增长。经常用到地图API，如谷歌地图，高德地图，Bing地图等等。这些地图服务使公众获取了大量的地理数据，也推动了GIS行业发展。
+
+#### 特点
+
+1. 数据实时性高
+2. 数据精度高
+3. 服务类型全面
+4. 多种风格的产品
+
+#### 天地图
+
+天地图是国家测绘地理信息局建设的“国家地理信息公共服务平台”。作为中国区域内官方的地理信息服务网站。目前为国内唯一标准坐标系、数据权威可信的公共服务平台，主要的服务标准都是OGC标准发布到。
+
+![image](../.vuepress/public/images/GISsystem/4-2.png)
 
 ## 客户端呈现
 
-1. ArcMap
+我们获取到数据，并进行数据的处理与发布。就到了客户端使用GIS数据的阶段。
 
-arcgisonline arcgis for js arcmap
+![image](../.vuepress/public/images/GISsystem/5-1.png)
 
-2. Supermap iDesktop
+### ArcGIS
 
- for openlayer   for mapbox 
+#### web端
+
+打开ArcGIS Server 的地图服务地址，可以通过ArcGIS API for JS 或 ArcGIS OnLine 查看地图服务。
+
+![image](../.vuepress/public/images/GISsystem/5-2.png)
+
+##### ArcGIS API for JS的方式
+
+![image](../.vuepress/public/images/GISsystem/5-3.png)
+
+##### ArcGIS OnLine的方式
+
+![image](../.vuepress/public/images/GISsystem/5-4.png)
+
+#### 桌面端
+
+在ArcMap桌面端软件中，添加Server服务站点，就可以查看该Server站点下的所有地图服务
+
+![image](../.vuepress/public/images/GISsystem/5-5.png)
+
+### Supermap
+
+#### web端
+
+打开SuperMap Iserver 的地图服务地址。
+
+地图服务可以通过Leaflet，Openlayers，MapboxGL，Cesium这些GIS地图开源库呈现
+
+![image](../.vuepress/public/images/GISsystem/5-6.png)
+
+**以OpenLayers为例**
+
+![image](../.vuepress/public/images/GISsystem/5-7.png)
+
+#### 桌面端
+
+打开Supermap iDesktop,选择添加web型数据源，将地图服务添加到工作空间，就可以查看到该地图服务下的地图。
+
+![image](../.vuepress/public/images/GISsystem/5-8.png)
+
+
+
