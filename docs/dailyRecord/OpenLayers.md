@@ -2,7 +2,7 @@
 
 ## 地图
 
-### ol/Map
+### ol/Map（地图）
 
 地图对象，作为GIS应用最基本的东西，用于装载layer。
 
@@ -10,11 +10,20 @@
 
 参数名|Type|简介
 -|-|-
-layers||图层。 如果未定义，则将渲染没有图层的地图。 图层是按提供的顺序渲染的，因此例如要使某图层出现在的顶部，则它必须位于图层组最后。
+layers|ol/layer|图层。 如果未定义，则将渲染没有图层的地图。 图层是按提供的顺序渲染的，因此例如要使某图层出现在的顶部，则它必须位于图层组最后。
 target|HTMLElement 或 string|地图的容器，DOM元素本身或DOM元素ID。 如果在构造时未指定，则必须调用setTarget函数才能渲染地图。
 view|ol/View|地图的视图。也可以通过setView函数设置
 
-### ol/View
+```js
+let map = new Map({
+  overlays: [this.tipsOverlay],
+  layers: this.basemapLayers,
+  target: mapNode,
+  view: mapView
+});
+```
+
+### ol/View（视图）
 
 View对象代表地图的简单2D视图。
 
@@ -33,13 +42,16 @@ setCenter，setResolution并setRotation可以用来改变视图的状态。并�
 * 中心约束：
 由extent参数决定。默认情况下，视图中心完全不受约束。
 
-### ol/proj/Projection
+### ol/proj/Projection（坐标系）
 
 投影定义类。对于非epsg3857，4326的坐标系的地图服务，是需要利用proj4插件定义投影，并注册，才能正常加载。
 
 单位：
 > 米："m"或"meter"
 > 度："degrees"或"degree"
+
+**踩坑记录：
+Projection一定要带上单位。否则默认为“度”。如果坐标系的单位不是度的话就惨了，后面加载切片计算出来的切片行列号会差的十万八千里，而且很难想到是因为Projection单位导致的，相当难定位问题。**
 
 ```js
 import proj4 from 'proj4';
@@ -59,9 +71,11 @@ let mapView = new View({
 });
 ```
 
-有关各种投影的参数定义，可参考 https://epsg.io/
+有关各种投影的参数定义，可参考 
 
-### ol/Overlay
+[epsg](https://epsg.io/)
+
+### ol/Overlay（地图弹窗）
 
 要在地图上显示并附加到单个地图位置的元素。通过绑定到地理坐标，跟随地图的移动而移动。
 
@@ -164,7 +178,7 @@ extent|ol/extent|请求切片的边界范围
 
 openlayers提供了加载arcgis mapserver的动态图层类（ol/source/ImageArcGISRest）。
 
-使用场景：在openlayers中以动态服务图层的方式加载 Arcgis Server的MapServer。对标arcgis api中的mapImageLayer
+**使用场景：在openlayers中以动态服务图层的方式加载 Arcgis Server的MapServer。对标arcgis api中的mapImageLayer**
 
 基本实例化参数：
 
@@ -205,9 +219,18 @@ map.addLayer(layer);
 
 由于动态图层的原理，对于数据较多的服务，server出图的时间会不尽人意。所以出现了这种加载方式。
 
-何为类切片图层？
+**Q:
+何为类切片图层？**
 
-在原来的动态图层都是server按照当前视图范围，渲染一张图片。现在是将当前视图范围做分割，分块并发请求server渲染小区域的图片，最后将这些图片按切片图层的原理拼接回来。
+**A:
+一般来说动态图层都是将当前视图范围传给server，由server渲染一张图片显示出来。
+类切片是将当前视图范围按照一定的宽高做分割，分割后将分块范围通过并发请求server渲染分割区域的图片，最后将这些图片按切片图层的原理拼接回来。**
+
+**Q:
+有何优点？**
+
+**A:
+比如当前视图数据较多，server渲染一张图需要四秒。理论上将这个范围分成4份去并发的请求，渲染时间会缩短为1秒，以此类推分成8份会到0.5秒。当然还会受到浏览器最大并发请求数的限制，但是理论上效果是会好于一般的动态图层**
 
 基本实例化参数：
 
@@ -288,7 +311,7 @@ openlayers本身是不支持直接加载超图服务的。但是超图提供了�
 
 工具类具体信息参考：
 
-https://github.com/SuperMap/iClient-JavaScript/blob/master/src/openlayers/mapping/ImageSuperMapRest.js
+[ImageSuperMapRest](https://github.com/SuperMap/iClient-JavaScript/blob/master/src/openlayers/mapping/ImageSuperMapRest.js)
 
 基本实例化参数：
 
@@ -344,7 +367,7 @@ openlayers本身是不支持直接加载超图服务的。但是超图提供了�
 
 工具类具体信息参考：
 
-https://github.com/SuperMap/iClient-JavaScript/blob/master/src/openlayers/mapping/TileSuperMapRest.js
+[TileSuperMapRest](https://github.com/SuperMap/iClient-JavaScript/blob/master/src/openlayers/mapping/TileSuperMapRest.js)
 
 基本实例化参数：
 
@@ -354,9 +377,6 @@ url|string|地图服务地址
 layersID|string|指定图层显隐
 prjCoordSys|object|坐标系
 tileGrid|ol/tilegrid/TileGrid|切片组。
-
-踩坑记录：
-在前面定义Projection的时候，Projection一定要带上单位。否则默认为“度”。如果坐标系的单位不是度的话就惨了，计算出来的切片行列号会差的十万八千里，而且也不会报错，相当难定位问题。
 
 使用示例：
 
@@ -396,7 +416,7 @@ map.addLayer(layer);
 
 ## 空间图形
 
-### geometryol/geom/Geometry
+### geometryol/geom/Geometry（几何）
 
 几何对象的基类。 此类没有构造函数，不能被实例化。
 
@@ -416,7 +436,7 @@ map.addLayer(layer);
 [多边形](https://openlayers.org/en/latest/apidoc/module-ol_geom_Polygon-Polygon.html)
 [圆](https://openlayers.org/en/latest/apidoc/module-ol_geom_Circle-Circle.html)
 
-### ol/Feature
+### ol/Feature（要素）
 
 几何要素。包含geometry，attributes以及样式style。
 对标arcgis api的 Graphic。
@@ -452,7 +472,7 @@ let tempFeature = new Feature({
 feature.setStyle(symbol);
 ```
 
-### ol/style/Style
+### ol/style/Style（样式）
 
 几何图形的样式类。
 
@@ -490,7 +510,7 @@ const symbol = new Style({
 });
 ```
 
-### ol/layer/Vector
+### ol/layer/Vector（矢量图层）
 
 呈现给客户端的矢量数据。
 对标arcgis api的`esri/layers/GraphicsLayer`
@@ -522,7 +542,7 @@ map.addLayer(vectorLayer);
 vectorLayer.getSource().addFeature(feature);
 ```
 
-### ol/interaction/Draw
+### ol/interaction/Draw（绘制）
 
 绘制要素几何的交互工具。
 
@@ -565,12 +585,15 @@ drawInteraction.on("drawend", DrawEvent => {
 
 在openlayers中加载arcgis或超图的服务，对服务进行查询的方式，除了使用对应厂商提供的API，也可以自己根据服务提供的查询接口，补充参数进行查询请求。
 
+这里不介绍查询的参数，只介绍如何将两家的服务查询出来的要素渲染到openlayers的地图上。
+
 ### arcgis服务
 
 将arcgis服务查询到的要素转化为openlayers的要素。
 
 关于查询的参数可以参考arcgis api 官网
-https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html
+
+[Query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html)
 
 使用案例：
 
@@ -646,7 +669,8 @@ const esriGeometry2OLGeo = (esriGeometry, geometryType) => {
 将超图服务查询到的要素转化为openlayers的要素。
 
 关于查询的参数可以参考我之前写的使用超图API查询的笔记
-https://roman-29.github.io/Blog/dailyRecord/SuperMapWebGL.html#%E6%9F%A5%E8%AF%A2
+
+[超图查询API](https://roman-29.github.io/Blog/dailyRecord/SuperMapWebGL.html#%E6%9F%A5%E8%AF%A2)
 
 使用案例：
 
