@@ -353,3 +353,5 @@ img.setAttribute("crossOrigin", "Anonymous");
 - [没错，就是Access-Control-Allow-Origin，跨域](https://www.jianshu.com/p/89a377c52b48)
 - [一个关于image访问图片跨域的问题](https://www.jianshu.com/p/8fa0fb53c183)
 - [canvas图片问题浅析](https://www.jianshu.com/p/c3aa975923de)
+
+<ToTop/>
