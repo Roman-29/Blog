@@ -38,7 +38,7 @@ http://news.company.com/dir/other.html|失败|不同域名 ( news和store )
 
 1.有一天你刚睡醒，收到一封邮件，说是你的银行账号有风险，赶紧点进www.yinghang.com改密码。你吓尿了，赶紧点进去，还是熟悉的银行登录界面，你果断输入你的账号密码，登录进去看看钱有没有少了。
 
-2.睡眼朦胧的你没看清楚，平时访问的银行网站是www.yinhang.com，而现在访问的是www.yinghang.com，这个钓鱼网站做了什么呢？
+2.睡眼朦胧的你没看清楚，平时访问的银行网站是 www.yinhang.com 而现在访问的是 www.yinghang.com ，这个钓鱼网站做了什么呢？
 
 ```
 // HTML

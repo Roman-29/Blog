@@ -32,7 +32,7 @@ module.exports = {
           ]
         },
         {
-          title: "前端疑难杂症",
+          title: "内功修炼",
           collapsable: true,
           children: [
             "HTTP","CrossDomain"
