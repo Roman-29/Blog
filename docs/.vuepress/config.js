@@ -35,7 +35,7 @@ module.exports = {
           title: "内功修炼",
           collapsable: true,
           children: [
-            "HTTP","CrossDomain"
+            "HTTP","CrossDomain","Nginx"
           ]
         },
         {

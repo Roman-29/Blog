@@ -1369,17 +1369,24 @@ import('./show').then((show) => {
 其中 0.bundle.js 内容如下：
 
 ```js
-webpackJsonp([0], {
-  3: (function (module, exports, __webpack_require__) {
-    var __WEBPACK_AMD_DEFINE_RESULT__;
-    !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-        return function (a, b) {
-          return a * b;
-        };
-      }.call(exports, __webpack_require__, exports, module),
-      __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  })
-});
+// 加载在本文件(0.bundle.js)中包含的模块
+webpackJsonp(
+  // 在其它文件中存放着的模块的 ID
+  [0],
+  // 本文件所包含的模块
+  [
+    // show.js 所对应的模块
+    (function (module, exports) {
+
+      // 操作 DOM 元素，把 content 显示到网页上
+      function show(content) {
+        window.document.getElementById('app').innerText = 'Hello,' + content;
+      }
+      // 通过 CommonJS 规范导出 show 函数
+      module.exports = show;
+    })
+  ]
+);
 ```
 
 `bundle.js` 内容如下：
