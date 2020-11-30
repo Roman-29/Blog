@@ -28,7 +28,7 @@ module.exports = {
           title: "前端模块化",
           collapsable: true,
           children: [
-            "qdmkh","webpack"
+            "qdmkh","webpack","webpackAdvanced"
           ]
         },
         {
