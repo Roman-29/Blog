@@ -670,7 +670,7 @@ const esriGeometry2OLGeo = (esriGeometry, geometryType) => {
 
 关于查询的参数可以参考我之前写的使用超图API查询的笔记
 
-[超图查询API](https://roman-29.github.io/Blog/dailyRecord/SuperMapWebGL.html#%E6%9F%A5%E8%AF%A2)
+[超图查询API](http://support.supermap.com.cn:8090/iserver/help/html/zh/mergedProjects/SuperMapiServerRESTAPI/root/data/featureResults/featureResults.htm)
 
 使用案例：
 

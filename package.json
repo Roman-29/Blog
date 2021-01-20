@@ -12,8 +12,9 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "@vuepress/plugin-medium-zoom": "^1.7.1",
     "husky": "^3.0.9",
-    "vuepress": "^1.2.0"
+    "vuepress": "^1.7.1"
   },
   "husky": {
     "hooks": {

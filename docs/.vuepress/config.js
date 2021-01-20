@@ -35,7 +35,14 @@ module.exports = {
           title: "内功修炼",
           collapsable: true,
           children: [
-            "HTTP","CrossDomain","Nginx"
+            "HTTP","CrossDomain","Nginx","this"
+          ]
+        },
+        {
+          title: "总结",
+          collapsable: true,
+          children: [
+            "2020"
           ]
         },
         {
@@ -75,5 +82,6 @@ module.exports = {
     },
     lastUpdated: "Last Updated",
     sidebarDepth: 2
-  }
+  },
+  plugins: ['@vuepress/medium-zoom']
 }
