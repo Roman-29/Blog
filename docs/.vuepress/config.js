@@ -49,7 +49,7 @@ module.exports = {
           title: "GIS",
           collapsable: true,
           children: [
-            "OpenLayers","ArcgisAPI","GISsystem","SuperMapWebGL","SuperMapIserver","IserverQuery"
+            "OpenLayers","OLSourceCode1","OLSourceCode2","ArcgisAPI","GISsystem","SuperMapWebGL","SuperMapIserver","IserverQuery"
           ]
         },
         {
