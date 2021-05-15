@@ -8,7 +8,6 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: "📚学习总结", link: "/dailyRecord/" },
-      // { text: "📚笔记分类", link: "/classify/" },
       { text: "📌书签整理", link: "/bookmark/" },
       { text: "✔️编码规范&协同开发", link: "/lint/" },
       {
@@ -29,6 +28,13 @@ module.exports = {
           collapsable: true,
           children: [
             "qdmkh","webpack","webpackAdvanced"
+          ]
+        },
+        {
+          title: "前端异常监控",
+          collapsable: true,
+          children: [
+            "FrontendMonitor"
           ]
         },
         {

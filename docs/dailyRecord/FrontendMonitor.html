@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- <img src="./xxxxx.png"> -->
+  <script>
+    function fun1() {
+      console.log('1->begin')
+      throw new Error("error")
+      console.log('1->end')
+    }
+
+    // const asyncFunc = () => {
+    //   return new Promise(resolve => {
+    //     throw new Error("error")
+    //     resolve(null)
+    //   })
+    // }
+
+    // setTimeout(async () => {
+    //   await asyncFun()
+    // })
+
+    // setTimeout(() => {
+    //   fun1()
+    // })
+
+    
+
+    window.onerror = (...args) => {
+      console.log('error:', args)
+    }
+   
+
+    window.addEventListener('error', args => {
+      console.log(
+        'error event:', args
+      );
+      return true;
+    },
+      true // 捕获阶段
+    );
+
+    window.addEventListener("unhandledrejection", e => {
+      throw e.reason
+    });
+
+    fun1()
+  </script>
+</body>
+
+</html>
