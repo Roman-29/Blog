@@ -146,7 +146,7 @@ new Cesium.EllipsoidTerrainProvider(ellipsoid)
 
 对 Viewer 进行视图控制
 
-#### 方法一：通过 setView 函数控制
+**方法一：通过 setView 函数控制**
 
 传入中心点经纬度
 
@@ -176,7 +176,7 @@ view.camera.setView({
 });
 ```
 
-#### 方法二：通过 flyto 函数控制
+**方法二：通过 flyto 函数控制**
 
 ```js
 view.camera.flyTo({
@@ -199,7 +199,7 @@ view.camera.flyTo({
 });
 ```
 
-#### 方法三：通过 lookAt 函数控制
+**方法三：通过 lookAt 函数控制**
 
 ```js
 var center = Cesium.Cartesian3.fromDegrees(114.44455, 22.0444); //camera视野的中心点坐标
@@ -645,6 +645,31 @@ var orangePolygon = viewer.entities.add({
 ```
 
 注意事项：多边形的 outlineWidth 属性在 Windows 上的 WebGL 无效。
+
+### Primitive
+
+#### Primitive介绍
+
+Primitive由两个部分组成
+
+（1）几何形状（Geometry）：定义了Primitive的结构，例如三角形、线条、点等
+ （2）外观（Appearance ）：定义Primitive的着色（Sharding），包括GLSL（OpenGL着色语言，OpenGL ShadingLanguage）顶点着色器和片段着色器（ vertex and fragment shaders），以及渲染状态（render state）
+
+使用Geometry和Appearance 具有以下优势：
+ （1）性能：绘制大量Primitive时，可以将其合并为单个Geometry以减轻CPU负担、更好的使用GPU。合并Primitive由web worker线程执行，UI保持响应性
+ （2）灵活性：Geometry与Appearance 解耦，两者可以分别进行修改
+ （3）低级别访问：易于编写GLSL 顶点、片段着色器、使用自定义的渲染状态
+ 同时，具有以下劣势：
+ （1）需要编写更多地代码
+ （2）需要对图形编程有更多的理解，特别是OpenGL的知识
+
+#### Primitive 与 Entity的区别
+
+（1）面向图形开发人员的底层API，通常称为“**Primitive API**”。该API暴露最小限度的抽象，使用图形学术语，具有很大的灵活性，需要具有图形学编程的知识；
+
+（2）高级别的数据驱动的API，称为“**Entity API**”。该API使用一致性设计的、高级别的对象来管理一组相关性的可视化对象，其底层使用Primitive API；
+
+（3）entity 用法简单, primitive 用法复杂. entity已经封装的如此完美, 调用如此便捷, 为什么还要primitive接口呢? 区别就在于加载效率. primitive 更接近 webgl 底层, 没有entity 各种附加属性, 因此效率更高. 
 
 ### Cesium.CustomDataSource （矢量数据源）
 
