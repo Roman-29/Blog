@@ -1,0 +1,244 @@
+<html>
+<div id="app"></div>
+<script>
+  // vdom
+  function h(tag, props, children) {
+    return {
+      tag,
+      props,
+      children
+    }
+  }
+
+  function mount(vnode, container) {
+    // 根据虚拟节点的tag创建真实元素
+    const el = vnode.el = document.createElement(vnode.tag);
+    if (vnode.props) {
+      for (const key in vnode.props) {
+        // key可能是property, attribute, 或者事件监听
+        const value = vnode.props[key];
+        if (key.startsWith('on')) {
+          el.addEventListener(key.slice(2).toLowerCase(), value)
+        } else {
+          // 简单起见, 不做判断, 默认attribute
+          el.setAttribute(key, value)
+        }
+
+      }
+    }
+    if (vnode.children) {
+      // child可以是字符串, 也可以是一个vnode
+      if (typeof vnode.children === "string") {
+        el.textContent = vnode.children
+      } else {
+        vnode.children.forEach(child => {
+          mount(child, el)
+        });
+      }
+    }
+
+    // 挂载到容器下
+    container.appendChild(el)
+  }
+
+  // 刷新数据
+  function patch(oldVnode, newVnode) {
+    if (oldVnode.tag === newVnode.tag) {
+      const el = newVnode.el = oldVnode.el
+
+      const oldProps = oldVnode.props || {}
+      const newProps = newVnode.props || {}
+
+      for (const key in newProps) {
+        const oldValue = oldVnode[key];
+        const newValue = newProps[key];
+        if (oldValue !== newValue) {
+          // 简单起见, 不做判断, 默认attribute
+          el.setAttribute(key, newValue)
+        }
+      }
+
+      // 去掉失效的props
+      for (const key in oldProps) {
+        if (!(key in newProps)) {
+          el.removeAttribute(key)
+        }
+      }
+
+      // 处理children
+      const oldChildren = oldVnode.children
+      const newChildren = newVnode.children
+
+      if (typeof newChildren === "string") {
+        if (typeof oldChildren === "string") {
+          if (newChildren !== oldChildren) {
+
+            el.textContent = newChildren
+          }
+        } else {
+          el.textContent = newChildren
+        }
+      } else {
+        if (typeof oldChildren === "string") {
+          // 清空元素
+          el.innerHTML = ''
+          newChildren.forEach(child => {
+            mount(child, el)
+          })
+        } else {
+          const commonLength = Math.min(oldChildren.length, newChildren.length)
+          for (let i = 0; i < commonLength; i++) {
+            patch(oldChildren[i], newChildren[i])
+          }
+          if (newChildren.length > oldChildren.length) {
+            newChildren.slice(oldChildren.length).forEach(child => {
+              mount(child, el)
+            })
+          } else {
+            oldChildren.slice(newChildren.length).forEach(child => {
+              el.removeChild(child.el)
+            })
+          }
+        }
+      }
+    } else {
+      // 替换元素
+    }
+  }
+
+  // 目标图 存储响应式对象
+  const targetMap = new WeakMap();
+
+  // 追踪响应式
+  function track(target, key) {
+    if (activeEffect) {
+      // 依赖图 存储响应式对象的属性
+      let depsMap = targetMap.get(target);
+      if (!depsMap) {
+        targetMap.set(target, (depsMap = new Map()));
+      }
+
+      // dep是effect集
+      let dep = depsMap.get(key);
+      if (!dep) {
+        depsMap.set(key, (dep = new Set()));
+      }
+
+      console.log("存储effect到" + key + "的depsMap");
+      dep.add(activeEffect);
+    } else {
+      console.log("没有 activeEffect 忽略track");
+    }
+  }
+
+  // 触发响应式
+  function trigger(target, key) {
+    const depsMap = targetMap.get(target);
+    if (!depsMap) {
+      return;
+    }
+    let dep = depsMap.get(key);
+    if (dep) {
+      console.log("触发" + key + "的effect集");
+      dep.forEach((effect) => {
+        effect();
+      });
+    }
+  }
+
+  let activeEffect = null;
+  function watchEffect(eff) {
+    activeEffect = eff;
+    activeEffect();
+    activeEffect = null;
+  }
+
+  // 生成响应式对象
+  function reactive(target) {
+    const handler = {
+      get(target, key, receiver) {
+        console.log("GET代理: " + key + "属性");
+        let result = Reflect.get(target, key, receiver);
+        console.log("存储" + key + "属性的响应式");
+        track(target, key);
+        return result;
+      },
+      set(target, key, value, receiver) {
+        console.log("SET代理: " + key + "属性");
+        let oldValue = target[key];
+        let result = Reflect.set(target, key, value, receiver);
+        console.log("新值" + value + ": 旧值" + oldValue);
+        if (oldValue != value) {
+          console.log("触发" + key + "属性的响应式");
+          trigger(target, key);
+        }
+        return result;
+      },
+    };
+    console.log("创建响应式对象");
+    return new Proxy(target, handler);
+  }
+
+  // VUE3实现方式, 定义一个基本类型的响应式数据
+  function ref(raw) {
+    const r = {
+      get value() {
+        track(r, "value");
+        return raw;
+      },
+      set value(newValue) {
+        if (newValue != raw) {
+          raw = newValue;
+          trigger(r, "value");
+        }
+      },
+    };
+    return r;
+  }
+
+  // 计算属性
+  function computed(getter) {
+    let result = ref();
+    watchEffect(() => {
+      result.value = getter();
+    });
+    return result;
+  }
+
+
+
+  const App = {
+    data: reactive({
+      count: 0
+    }),
+    render() {
+      return h('div', {
+        onclick: () => {
+          this.data.count++
+        }
+      }, String(this.data.count))
+    }
+  }
+
+  function mountApp(component, container) {
+    let isMounted = false;
+    let prevVdom = null;
+    watchEffect(() => {
+      if (!isMounted) {
+        const vdom = component.render()
+        mount(vdom, container);
+        prevVdom = vdom;
+        isMounted = true;
+      } else {
+        const newVdom = component.render()
+        patch(prevVdom, newVdom)
+        prevVdom = newVdom
+      }
+    })
+  }
+
+  mountApp(App, document.getElementById('app'))
+
+</script>
+
+</html>

@@ -82,7 +82,7 @@ function ref(raw) {
 }
 
 let activeEffect = null;
-function effectFun(eff) {
+function watchEffect(eff) {
   activeEffect = eff;
   activeEffect();
   activeEffect = null;
@@ -90,7 +90,7 @@ function effectFun(eff) {
 
 function computed(getter) {
   let result = ref();
-  effectFun(() => {
+  watchEffect(() => {
     result.value = getter();
   });
   return result;

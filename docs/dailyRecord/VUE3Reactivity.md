@@ -36,6 +36,8 @@ VUE3是如何存储代码中的计算方式, 并当属性更新时重新跑一�
 
 ![image](../.vuepress/public/images/VUE3Reactivity/calculation5.png)
 
+这里的targetMap用到weakMap的原因是如果这个目标对象不再可以从任何代码访问, 那么他在weakMap上的关联就会被垃圾回收.
+
 ### 总结
 
 我们已经有存储不同effect的方法, 但是我们还没让effect实现自动重新运行, 这会留到下一章. 
@@ -152,7 +154,7 @@ console.log(Reflect.get(product, "quantity"));
 ```js
 function computed(getter) {
   let result = ref();
-  effectFun(() => {
+  watchEffect(() => {
     result.value = getter();
   });
   return result;

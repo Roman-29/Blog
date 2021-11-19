@@ -1,0 +1,52 @@
+<html>
+<div id="app"></div>
+<script>
+  let activeEffect = null;
+
+  class Dep {
+    constructor(value){
+      this.subscribers = new Set() // 订阅者
+      this._value = value;
+    }
+
+    get value() {
+      this.depend()
+      return this._value;
+    }
+    set value(newValue) {
+      this._value = newValue
+      this.notify()
+    }
+    
+    depend() {
+      if (activeEffect) {
+        this.subscribers.add(activeEffect)
+      }
+    }
+    notify() {
+      this.subscribers.forEach(effect => {
+        effect();
+      });
+    }
+  }
+
+  function watchEffect(effect) {
+    activeEffect = effect;
+    effect();
+    activeEffect = null;
+  }
+
+  const ok = new Dep(false)
+  const msg = new Dep("hello")
+
+  watchEffect(() => {
+    if (ok.value) {
+      console.log(msg.value);
+    } else {
+      console.log("false branch");
+    }
+  })
+  msg.value = "changed"
+</script>
+
+</html>

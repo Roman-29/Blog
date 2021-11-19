@@ -58,7 +58,7 @@ function reactive(target) {
 
 let activeEffect = null;
 
-function effectFun(eff) {
+function watchEffect(eff) {
   activeEffect = eff;
   activeEffect();
   activeEffect = null;
@@ -71,13 +71,13 @@ let product = reactive({
 let salePrice = 0;
 let total = 0;
 
-effectFun(() => {
+watchEffect(() => {
   console.log("执行 total effect");
   // 非响应式对象, total值失真
   console.log("salePrice是非响应式对象, total值失真");
   total = salePrice * product.quantity;
 });
-effectFun(() => {
+watchEffect(() => {
   console.log("执行 salePrice effect");
   salePrice = product.price * 0.9;
 });

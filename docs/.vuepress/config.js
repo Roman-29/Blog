@@ -41,7 +41,7 @@ module.exports = {
           title: "内功修炼",
           collapsable: true,
           children: [
-            "HTTP","CrossDomain","Nginx","this","VUE3Reactivity"
+            "HTTP","CrossDomain","Nginx","this","VUE3Reactivity","VUE3DeepDive"
           ]
         },
         {
