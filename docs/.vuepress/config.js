@@ -38,10 +38,17 @@ module.exports = {
           ]
         },
         {
+          title: "Vue3学习",
+          collapsable: true,
+          children: [
+            "VUE3Reactivity","VUE3DeepDive"
+          ]
+        },
+        {
           title: "内功修炼",
           collapsable: true,
           children: [
-            "HTTP","CrossDomain","Nginx","this","VUE3Reactivity","VUE3DeepDive"
+            "HTTP","CrossDomain","Nginx","this","TypeScript"
           ]
         },
         {

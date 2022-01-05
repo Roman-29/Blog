@@ -109,6 +109,6 @@ animation-direction
 ```
 效果如下：
 
-<img :src="('/images/CSS3 animation/GIF.gif')">
+<img :src="('../.vuepress/public/images/CSS3 animation/GIF.gif')">
 
 <ToTop/>
