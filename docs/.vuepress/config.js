@@ -62,16 +62,16 @@ module.exports = {
           title: "GIS",
           collapsable: true,
           children: [
-            "OpenLayers","OLSourceCode1","OLSourceCode2","ArcgisAPI","GISsystem","SuperMapWebGL","SuperMapIserver","IserverQuery"
+            "OpenLayers","OLSourceCode1","OLSourceCode2","ArcgisAPI","GISsystem","SuperMapWebGL","SuperMapIserver","IserverQuery","SuperMap3DStudy"
           ]
         },
-        {
-          title: "CSS",
-          collapsable: true,
-          children: [
-            "CSS"
-          ]
-        }
+        // {
+        //   title: "CSS",
+        //   collapsable: true,
+        //   children: [
+        //     "CSS"
+        //   ]
+        // }
       ],
       "/lint/": [
         {
@@ -91,7 +91,14 @@ module.exports = {
           collapsable: false,
           children: ["", "backend", "tool"]
         }
-      ]
+      ],
+      // "/plan/": [
+      //   {
+      //     title: "出游计划",
+      //     collapsable: false,
+      //     children: [""]
+      //   }
+      // ]
     },
     lastUpdated: "Last Updated",
     sidebarDepth: 2
