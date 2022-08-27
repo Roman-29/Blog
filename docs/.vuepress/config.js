@@ -38,10 +38,17 @@ module.exports = {
           ]
         },
         {
-          title: "Vue3学习",
+          title: "Vue3原理",
           collapsable: true,
           children: [
             "VUE3Reactivity","VUE3DeepDive"
+          ]
+        },
+        {
+          title: "Vue3源码",
+          collapsable: true,
+          children: [
+            "VUE3-reactivity-core"
           ]
         },
         {
