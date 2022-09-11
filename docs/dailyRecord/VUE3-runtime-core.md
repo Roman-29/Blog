@@ -305,8 +305,11 @@ function setupStatefulComponent(instance) {
 componentPublicInstance.ts
 
 ```ts
+// 代理出组件实例的关键信息
 const publicPropertiesMap = {
   $el: (i) => i.vnode.el,
+  $slots: (i) => i.slots,
+  $props: (i) => i.props,
 };
 
 export const PublicInstanceProxyHandles = {
@@ -902,18 +905,7 @@ function normalizeSlotValue(value) {
 }
 ```
 
-要在组件 render 函数获取 slots , 需要修改组件代理
-
-componentPublicInstance.ts
-
-```ts
-const publicPropertiesMap = {
-  $el: (i) => i.vnode.el,
-  $slots: (i) => i.slots,
-};
-```
-
-并且新增 renderSlots.ts 用来渲染 slots
+新增 renderSlots.ts 用来渲染 slots
 
 ```ts
 import { createVnode, Fragment } from "../vnode";

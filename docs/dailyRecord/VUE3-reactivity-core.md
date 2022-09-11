@@ -36,7 +36,7 @@ describe("effect", () => {
 
 其实现原理如图:
 
-![image](../.vuepress/public/images/VUE3SourceCode/reactivity-simple.drawio.png)
+![image](../.vuepress/public/images/VUE3SourceCode/reactivity-reactive.drawio.png)
 
 在 effect 中的函数, 如果有响应式对象被执行了 get 方法, 就会进入依赖收集, 将当前 effect 的函数存入 dep 中, 在响应式对象被执行 set 方法的时候, 会找到依赖收集时候的 dep, 将 function 再执行一遍, 实现响应式更新.
 
@@ -362,7 +362,13 @@ export function track(target: any, key: string | symbol) {
 
 ### 简介
 
-当我们定义基本类型的响应式对象的时候, 会去使用 ref 功能. ref 功能其实是对 reactive 的二次包装, 测试代码如下
+![image](../.vuepress/public/images/VUE3SourceCode/reactivity-ref.drawio.png)
+
+当我们定义基本类型的响应式对象的时候, 会去使用 ref 功能. ref 功能其实是对 reactive 的二次包装.
+
+因为不需要关心object的依赖, 所以依赖不保存在targetMap下, 而是直接保存在了 ref 自身的私有属性里.
+
+测试代码如下
 
 ```ts
 import { effect } from "../effect";

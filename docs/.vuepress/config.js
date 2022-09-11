@@ -38,7 +38,7 @@ module.exports = {
         {
           title: "Vue3源码",
           collapsable: true,
-          children: ["VUE3-reactivity-core", "VUE3-reactivity-advance"],
+          children: ["VUE3-reactivity-core", "VUE3-reactivity-advance", "VUE3-runtime-core"],
         },
         {
           title: "内功修炼",
@@ -61,7 +61,6 @@ module.exports = {
             "GISsystem",
             "SuperMapWebGL",
             "SuperMapIserver",
-            "IserverQuery",
             "SuperMap3DStudy",
           ],
         }
@@ -84,14 +83,7 @@ module.exports = {
           collapsable: false,
           children: ["", "backend", "tool"],
         },
-      ],
-      // "/plan/": [
-      //   {
-      //     title: "出游计划",
-      //     collapsable: false,
-      //     children: [""]
-      //   }
-      // ]
+      ]
     },
     lastUpdated: "Last Updated",
     sidebarDepth: 2,
