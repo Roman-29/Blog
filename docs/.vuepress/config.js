@@ -38,7 +38,7 @@ module.exports = {
         {
           title: "Vue3源码",
           collapsable: true,
-          children: ["VUE3-reactivity-core", "VUE3-reactivity-advance", "VUE3-runtime-core"],
+          children: ["VUE3-reactivity-core", "VUE3-reactivity-advance", "VUE3-runtime-core", "VUE3-runtime-update", "VUE3-runtime-diff"],
         },
         {
           title: "内功修炼",
