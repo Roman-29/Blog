@@ -1,5 +1,7 @@
 # 响应式进阶(响应式 API)
 
+GitHub: https://github.com/Roman-29/mini-vue
+
 ## readonly/shallow 功能
 
 ### 简介

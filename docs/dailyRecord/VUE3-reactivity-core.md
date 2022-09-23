@@ -6,6 +6,8 @@
 
 可以以这张图为向导, 阅读本章节
 
+GitHub: https://github.com/Roman-29/mini-vue
+
 ## effect 和 reactive
 
 ### 简介

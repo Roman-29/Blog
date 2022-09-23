@@ -6,6 +6,8 @@
 
 可以以这张图为向导, 阅读本章节
 
+GitHub: https://github.com/Roman-29/mini-vue
+
 ## 更新 element 流程
 
 ### 简介

@@ -6,6 +6,8 @@
 
 可以以这张图为向导, 阅读本章节
 
+GitHub: https://github.com/Roman-29/mini-vue
+
 ## 初始化主流程
 
 观察图片, 如果我们要实现功能, 可以将主流程分为 component 和 element 两个方向处理
