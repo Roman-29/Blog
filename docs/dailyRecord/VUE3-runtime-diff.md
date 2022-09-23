@@ -1,4 +1,4 @@
-# diff 更新算法
+# 五、diff 更新算法
 
 GitHub: https://github.com/Roman-29/mini-vue
 

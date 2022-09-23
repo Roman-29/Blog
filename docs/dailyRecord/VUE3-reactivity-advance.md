@@ -1,4 +1,4 @@
-# 响应式进阶(响应式 API)
+# 二、响应式进阶(响应式 API)
 
 GitHub: https://github.com/Roman-29/mini-vue
 
