@@ -21,9 +21,9 @@ module.exports = {
     sidebar: {
       "/dailyRecord/": [
         {
-          title: "前端模块化",
+          title: "前端模块化和打包工具",
           collapsable: true,
-          children: ["qdmkh", "webpack", "webpackAdvanced"],
+          children: ["qdmkh", "webpack", "webpackAdvanced", "vite"],
         },
         {
           title: "前端异常监控",
@@ -38,7 +38,13 @@ module.exports = {
         {
           title: "Vue3源码",
           collapsable: true,
-          children: ["VUE3-reactivity-core", "VUE3-reactivity-advance", "VUE3-runtime-core", "VUE3-runtime-update", "VUE3-runtime-diff"],
+          children: [
+            "VUE3-reactivity-core",
+            "VUE3-reactivity-advance",
+            "VUE3-runtime-core",
+            "VUE3-runtime-update",
+            "VUE3-runtime-diff",
+          ],
         },
         {
           title: "内功修炼",
@@ -63,7 +69,7 @@ module.exports = {
             "SuperMapIserver",
             "SuperMap3DStudy",
           ],
-        }
+        },
       ],
       "/lint/": [
         {
@@ -83,7 +89,7 @@ module.exports = {
           collapsable: false,
           children: ["", "backend", "tool"],
         },
-      ]
+      ],
     },
     lastUpdated: "Last Updated",
     sidebarDepth: 2,
