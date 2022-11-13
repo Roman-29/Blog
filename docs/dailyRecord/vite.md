@@ -77,3 +77,12 @@ Vite 执行时所做的“依赖预构建”这个过程有两个目的:
 
 ![image](../.vuepress/public/images/vite/1.png)
 
+## vite对css的处理
+
+vite天生就支持对css文件的直接处理, 整个处理流程如下:
+
+1. vite在读取js文件中得知引用到了css文件
+2. 使用fs模块去读取css中的文件内容
+3. 将该css文件中的内容替换为js脚本(方便热更新或者css模块化)
+4. js脚本会创建一个style标签, 将css中文件内容填入style标签里
+5. 将style标签插入到index.html的head中
