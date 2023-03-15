@@ -70,6 +70,11 @@ module.exports = {
             "SuperMap3DStudy",
           ],
         },
+        {
+          title: "其他",
+          collapsable: true,
+          children: ["ITEnvironment"],
+        },
       ],
       "/lint/": [
         {
