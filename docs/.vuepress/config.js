@@ -21,21 +21,6 @@ module.exports = {
     sidebar: {
       "/dailyRecord/": [
         {
-          title: "前端模块化和打包工具",
-          collapsable: true,
-          children: [
-            "modularization/qdmkh",
-            "modularization/webpack",
-            "modularization/webpackAdvanced",
-            "modularization/vite",
-          ],
-        },
-        {
-          title: "前端异常监控",
-          collapsable: true,
-          children: ["FrontendMonitor"],
-        },
-        {
           title: "Vue3源码",
           collapsable: true,
           children: [
@@ -45,6 +30,34 @@ module.exports = {
             "vue/VUE3-runtime-core",
             "vue/VUE3-runtime-update",
             "vue/VUE3-runtime-diff",
+          ],
+        },
+        {
+          title: "单元测试",
+          collapsable: true,
+          children: ["unittest/hello-test", "unittest/vitest"],
+        },
+        {
+          title: "GIS",
+          collapsable: true,
+          children: [
+            "gis/OpenLayers",
+            "gis/OLSourceCode1",
+            "gis/OLSourceCode2",
+            "gis/ArcgisAPI",
+            "gis/GISsystem",
+            "gis/SuperMapWebGL",
+            "gis/SuperMap3DStudy",
+          ],
+        },
+        {
+          title: "前端模块化和打包工具",
+          collapsable: true,
+          children: [
+            "modularization/qdmkh",
+            "modularization/webpack",
+            "modularization/webpackAdvanced",
+            "modularization/vite",
           ],
         },
         {
@@ -59,22 +72,14 @@ module.exports = {
           ],
         },
         {
+          title: "前端异常监控",
+          collapsable: true,
+          children: ["FrontendMonitor"],
+        },
+        {
           title: "总结",
           collapsable: true,
           children: ["2020"],
-        },
-        {
-          title: "GIS",
-          collapsable: true,
-          children: [
-            "gis/OpenLayers",
-            "gis/OLSourceCode1",
-            "gis/OLSourceCode2",
-            "gis/ArcgisAPI",
-            "gis/GISsystem",
-            "gis/SuperMapWebGL",
-            "gis/SuperMap3DStudy",
-          ],
         },
         {
           title: "其他",
