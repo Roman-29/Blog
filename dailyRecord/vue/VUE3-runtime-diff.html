@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>五、diff 更新算法 | Roman&#39;s Notebook</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/Blog/images/logo.png">
+    <meta name="description" content="📝每天记录一点点">
+    
+    <link rel="preload" href="/Blog/assets/css/0.styles.0fa253d5.css" as="style"><link rel="preload" href="/Blog/assets/js/app.0e74c7b5.js" as="script"><link rel="preload" href="/Blog/assets/js/2.fd75a44f.js" as="script"><link rel="preload" href="/Blog/assets/js/12.268653b6.js" as="script"><link rel="prefetch" href="/Blog/assets/js/10.4875991f.js"><link rel="prefetch" href="/Blog/assets/js/11.d28505ce.js"><link rel="prefetch" href="/Blog/assets/js/13.3c651158.js"><link rel="prefetch" href="/Blog/assets/js/14.47ddb8d4.js"><link rel="prefetch" href="/Blog/assets/js/15.287411d5.js"><link rel="prefetch" href="/Blog/assets/js/16.090affc6.js"><link rel="prefetch" href="/Blog/assets/js/17.4e5df8a3.js"><link rel="prefetch" href="/Blog/assets/js/18.61cf5b27.js"><link rel="prefetch" href="/Blog/assets/js/19.a62fd1fb.js"><link rel="prefetch" href="/Blog/assets/js/20.37ad475e.js"><link rel="prefetch" href="/Blog/assets/js/21.e0027460.js"><link rel="prefetch" href="/Blog/assets/js/22.572a50b5.js"><link rel="prefetch" href="/Blog/assets/js/23.2369bdea.js"><link rel="prefetch" href="/Blog/assets/js/24.5a596a1b.js"><link rel="prefetch" href="/Blog/assets/js/25.4b246fd9.js"><link rel="prefetch" href="/Blog/assets/js/26.98abeed2.js"><link rel="prefetch" href="/Blog/assets/js/27.a03d5e4d.js"><link rel="prefetch" href="/Blog/assets/js/28.a2ff22a3.js"><link rel="prefetch" href="/Blog/assets/js/29.44afd3b0.js"><link rel="prefetch" href="/Blog/assets/js/3.6fbf852d.js"><link rel="prefetch" href="/Blog/assets/js/30.b746ba19.js"><link rel="prefetch" href="/Blog/assets/js/31.d405846c.js"><link rel="prefetch" href="/Blog/assets/js/32.eebe8bea.js"><link rel="prefetch" href="/Blog/assets/js/33.723328ef.js"><link rel="prefetch" href="/Blog/assets/js/34.ecac4f32.js"><link rel="prefetch" href="/Blog/assets/js/35.7354606f.js"><link rel="prefetch" href="/Blog/assets/js/36.ae4d9a77.js"><link rel="prefetch" href="/Blog/assets/js/37.2fc49dda.js"><link rel="prefetch" href="/Blog/assets/js/38.42482ab6.js"><link rel="prefetch" href="/Blog/assets/js/39.2656d64e.js"><link rel="prefetch" href="/Blog/assets/js/4.185a70c1.js"><link rel="prefetch" href="/Blog/assets/js/40.bb340520.js"><link rel="prefetch" href="/Blog/assets/js/41.7943c259.js"><link rel="prefetch" href="/Blog/assets/js/42.e6ddb7c8.js"><link rel="prefetch" href="/Blog/assets/js/43.b79be4b8.js"><link rel="prefetch" href="/Blog/assets/js/44.8e8e3f49.js"><link rel="prefetch" href="/Blog/assets/js/45.8a53fb70.js"><link rel="prefetch" href="/Blog/assets/js/46.932536e0.js"><link rel="prefetch" href="/Blog/assets/js/47.6759b2e2.js"><link rel="prefetch" href="/Blog/assets/js/48.69763f7b.js"><link rel="prefetch" href="/Blog/assets/js/49.62e393f6.js"><link rel="prefetch" href="/Blog/assets/js/5.a6214ed2.js"><link rel="prefetch" href="/Blog/assets/js/6.a1e0b064.js"><link rel="prefetch" href="/Blog/assets/js/7.ece24cc9.js"><link rel="prefetch" href="/Blog/assets/js/8.b88f0e03.js"><link rel="prefetch" href="/Blog/assets/js/9.2a6fd121.js">
+    <link rel="stylesheet" href="/Blog/assets/css/0.styles.0fa253d5.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/Blog/" class="home-link router-link-active"><!----> <span class="site-name">Roman's Notebook</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Vue3源码</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/Blog/dailyRecord/vue/VUE3-miniVue.html" class="sidebar-link">VUE3 源码解析</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-reactivity-core.html" class="sidebar-link">一、响应式核心(依赖收集和触发)</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-reactivity-advance.html" class="sidebar-link">二、响应式进阶(响应式 API)</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-core.html" class="sidebar-link">三、运行时核心</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-update.html" class="sidebar-link">四、运行时更新</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html" aria-current="page" class="active sidebar-link">五、diff 更新算法</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#双端对比" class="sidebar-link">双端对比</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#对比原则" class="sidebar-link">对比原则</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#简介" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#代码" class="sidebar-link">代码</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#判断左侧-右侧相似节点" class="sidebar-link">判断左侧/右侧相似节点</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#简介-2" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#代码-2" class="sidebar-link">代码</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#创建新节点" class="sidebar-link">创建新节点</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#简介-3" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#创建" class="sidebar-link">创建</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#插入" class="sidebar-link">插入</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#删除旧节点" class="sidebar-link">删除旧节点</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#简介-4" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#删除" class="sidebar-link">删除</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#中间对比" class="sidebar-link">中间对比</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#简介-5" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#删除节点" class="sidebar-link">删除节点</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#最长递增子序列" class="sidebar-link">最长递增子序列</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#移动或创建节点" class="sidebar-link">移动或创建节点</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html#总结" class="sidebar-link">总结</a></li></ul></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>单元测试</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>GIS</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端模块化和打包工具</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>内功修炼</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端异常监控</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>总结</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>其他</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="五、diff-更新算法"><a href="#五、diff-更新算法" class="header-anchor">#</a> 五、diff 更新算法</h1> <p>GitHub: https://github.com/Roman-29/mini-vue</p> <h2 id="双端对比"><a href="#双端对比" class="header-anchor">#</a> 双端对比</h2> <p>更新 element 子节点的时候, 当新旧子节点都是数组类型的时候, 我们就可以使用 diff 算法优化 element 更新逻辑. 算法的核心是双端对比, 也就是对数组从头到尾, 从尾到头进行对比, 找到双端相同的部分和中间发生变化的部分, 对中间部分进行针对性处理(增加/删除/移动位置).</p> <h2 id="对比原则"><a href="#对比原则" class="header-anchor">#</a> 对比原则</h2> <h3 id="简介"><a href="#简介" class="header-anchor">#</a> 简介</h3> <p>拿到虚拟节点对比 tag 和 key 属性, 判断是否为相似节点, 如果相似直接在原 DOM 元素上修改, 不进行 DOM 的删除再创建</p> <h3 id="代码"><a href="#代码" class="header-anchor">#</a> 代码</h3> <p>在 vnode.ts 增加虚拟节点的 key 属性</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">createVnode</span><span class="token punctuation">(</span><span class="token keyword">type</span><span class="token punctuation">,</span> props<span class="token operator">?</span><span class="token punctuation">,</span> children<span class="token operator">?</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> vnode <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token keyword">type</span><span class="token punctuation">,</span>
+    props<span class="token punctuation">,</span>
+    children<span class="token punctuation">,</span>
+    key<span class="token operator">:</span> props <span class="token operator">&amp;&amp;</span> props<span class="token punctuation">.</span>key<span class="token punctuation">,</span> <span class="token comment">// 在props将key取出</span>
+    shapeFlag<span class="token operator">:</span> <span class="token function">getShapeFlag</span><span class="token punctuation">(</span><span class="token keyword">type</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    el<span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token keyword">return</span> vnode<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">isSameVNodeType</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// 判断 type 和 key</span>
+  <span class="token keyword">return</span> n1<span class="token punctuation">.</span><span class="token keyword">type</span> <span class="token operator">===</span> n2<span class="token punctuation">.</span><span class="token keyword">type</span> <span class="token operator">&amp;&amp;</span> n1<span class="token punctuation">.</span>key <span class="token operator">===</span> n2<span class="token punctuation">.</span>key<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="判断左侧-右侧相似节点"><a href="#判断左侧-右侧相似节点" class="header-anchor">#</a> 判断左侧/右侧相似节点</h2> <h3 id="简介-2"><a href="#简介-2" class="header-anchor">#</a> 简介</h3> <p><img src="/Blog/assets/img/diff-LRCompared.drawio.f5541ced.png" alt="image"></p> <p>如图, 我们需要对比新旧子节点, 找到两者左侧和右侧相同部分的索引</p> <h3 id="代码-2"><a href="#代码-2" class="header-anchor">#</a> 代码</h3> <p>在上一章 renderer.ts 在更新 element 的时候对不同的子节点类型进行了不同的处理, 这里我们将新旧子节点都是数组的情况进行补充</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">patchChildren</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> prevShapeFlag <span class="token operator">=</span> n1<span class="token punctuation">.</span>shapeFlag<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> shapeFlag <span class="token operator">=</span> n2<span class="token punctuation">.</span>shapeFlag<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> c1 <span class="token operator">=</span> n1<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> c2 <span class="token operator">=</span> n2<span class="token punctuation">.</span>children<span class="token punctuation">;</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token comment">// 当prevShapeFlag和shapeFlag都是数组时 采用 diff 算法</span>
+  <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token comment">// 左侧索引</span>
+  <span class="token keyword">let</span> e1 <span class="token operator">=</span> c1<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 旧节点相同节点索引</span>
+  <span class="token keyword">let</span> e2 <span class="token operator">=</span> c2<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> <span class="token comment">// 新节点相同节点索引</span>
+
+  <span class="token comment">// 左侧对比</span>
+  <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1 <span class="token operator">&amp;&amp;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> n1 <span class="token operator">=</span> c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> n2 <span class="token operator">=</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVNodeType</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 继续刷新节点下的内容</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 节点完全不一致, 对比结束, 得到 i 为左侧相同元素的后一位下标</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    i<span class="token operator">++</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 右侧对比</span>
+  <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1 <span class="token operator">&amp;&amp;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> n1 <span class="token operator">=</span> c1<span class="token punctuation">[</span>e1<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> n2 <span class="token operator">=</span> c2<span class="token punctuation">[</span>e2<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVNodeType</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 继续刷新节点下的内容</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span>n1<span class="token punctuation">,</span> n2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 节点完全不一致, 对比结束, 得到 e1,e2 为右侧相同元素的前一位下标</span>
+      <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    e1<span class="token operator">--</span><span class="token punctuation">;</span>
+    e2<span class="token operator">--</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="创建新节点"><a href="#创建新节点" class="header-anchor">#</a> 创建新节点</h2> <h3 id="简介-3"><a href="#简介-3" class="header-anchor">#</a> 简介</h3> <p><img src="/Blog/assets/img/diff-create.drawio.a19fb9d9.png" alt="image"></p> <p>如图当左侧索引(i) 大于 旧节点相同节点索引(e1)的情况出现时, 可以认定只需要创建新节点</p> <h3 id="创建"><a href="#创建" class="header-anchor">#</a> 创建</h3> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&gt;</span> e1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 新的比旧的多 创建后续节点</span>
+      <span class="token keyword">const</span> nextPos <span class="token operator">=</span> e2 <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+      <span class="token comment">// 获取插入的锚点</span>
+      <span class="token keyword">const</span> anchor <span class="token operator">=</span> nextPos <span class="token operator">&lt;</span> c2<span class="token punctuation">.</span>length <span class="token operator">?</span> c2<span class="token punctuation">[</span>nextPos<span class="token punctuation">]</span><span class="token punctuation">.</span>el <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">patch</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        i<span class="token operator">++</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="插入"><a href="#插入" class="header-anchor">#</a> 插入</h3> <p>由于可能会出现在头部插入节点的情况, 所以要修改默认渲染器的 insert 函数, 增加一个锚点作为插入依据</p> <p>修改 renderer.ts</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">mountElement</span><span class="token punctuation">(</span>vnode<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token comment">// 增加一个锚点参数</span>
+  <span class="token function">hostInsert</span><span class="token punctuation">(</span>el<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>修改 runtime-dom/index.js</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">insert</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// 当锚点为null时效果和append一样, 会插入到DOM元素的最后面</span>
+  container<span class="token punctuation">.</span><span class="token function">insertBefore</span><span class="token punctuation">(</span>child<span class="token punctuation">,</span> anchor <span class="token operator">||</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="删除旧节点"><a href="#删除旧节点" class="header-anchor">#</a> 删除旧节点</h2> <h3 id="简介-4"><a href="#简介-4" class="header-anchor">#</a> 简介</h3> <p><img src="/Blog/assets/img/diff-remove.drawio.877a5929.png" alt="image"></p> <p>如图当左侧索引(i) 大于 新节点相同节点索引(e2)的情况出现时, 可以认定只需要删除旧节点</p> <h3 id="删除"><a href="#删除" class="header-anchor">#</a> 删除</h3> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>i <span class="token operator">&gt;</span> e2<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span>i <span class="token operator">&lt;=</span> e1<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 新的比旧的少 删除多余节点</span>
+      <span class="token function">hostRemove</span><span class="token punctuation">(</span>c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      i<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="中间对比"><a href="#中间对比" class="header-anchor">#</a> 中间对比</h2> <h3 id="简介-5"><a href="#简介-5" class="header-anchor">#</a> 简介</h3> <p>上面是两种简单场景的处理方式, 但是实际上我们会遇到更加复杂的情况, 这个时候就需要用到中间对比去解决了</p> <h3 id="删除节点"><a href="#删除节点" class="header-anchor">#</a> 删除节点</h3> <p>如图, 当旧节点中有多余或不可匹配的子节点, 都要对其进行删除处理</p> <p><img src="/Blog/assets/img/diff-Cremove.drawio.6856b346.png" alt="image"></p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+  <span class="token operator">...</span>
+
+  <span class="token comment">// 当上述两种情况都不满足时, 采用中间对比</span>
+  <span class="token keyword">let</span> s1 <span class="token operator">=</span> i<span class="token punctuation">;</span>
+  <span class="token keyword">let</span> s2 <span class="token operator">=</span> i<span class="token punctuation">;</span>
+
+  <span class="token comment">// 记录新节点需要处理的中间节点总数量</span>
+  <span class="token keyword">const</span> toBePatched <span class="token operator">=</span> e2 <span class="token operator">-</span> s2 <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token comment">// 记录当前处理的数量</span>
+  <span class="token keyword">let</span> patched <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 把新节点下标和key做映射表</span>
+  <span class="token keyword">const</span> keyToNewIndexMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Map</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s2<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nextChild <span class="token operator">=</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    nextChild<span class="token punctuation">.</span>key <span class="token operator">&amp;&amp;</span> keyToNewIndexMap<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span>nextChild<span class="token punctuation">.</span>key<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 遍历旧节点</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s1<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e1<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> prevChild <span class="token operator">=</span> c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 如果当前处理的数量已经大于新节点中间节点总数，那么旧节点直接删除就可以了</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>patched <span class="token operator">&gt;=</span> toBePatched<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">hostRemove</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">continue</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">let</span> newIndex<span class="token punctuation">;</span>
+
+    <span class="token comment">// 拿到旧节点在新节点对应的位置</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      newIndex <span class="token operator">=</span> keyToNewIndexMap<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 如果用户没有设置key，那么就遍历所有，时间复杂度为O(n)</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> j <span class="token operator">=</span> s2<span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> e2<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVnodeType</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">,</span> c2<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          newIndex <span class="token operator">=</span> j<span class="token punctuation">;</span>
+          <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newIndex <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 新节点没有对应的key, 直接删除</span>
+      <span class="token function">hostRemove</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 更新对应的旧节点</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">,</span> c2<span class="token punctuation">[</span>newIndex<span class="token punctuation">]</span><span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      patched<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="最长递增子序列"><a href="#最长递增子序列" class="header-anchor">#</a> 最长递增子序列</h3> <p>在一个给定的数值序列中，找到一个子序列，使得这个子序列元素的数值依次递增，并且这个子序列的长度尽可能地大。</p> <p>当我们处理中间子节点的移动和添加时, 就需要用到最长递增子序列, 锁定中间节点&quot;最稳定部分&quot;, 修改其他非稳定节点</p> <p>如图, 我们只需要处理最长子序列以外的节点, 就可以达到性能最优</p> <p><img src="/Blog/assets/img/diff.drawio.dda6fe63.png" alt="image"></p> <p>代码如下:</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">getSequence</span><span class="token punctuation">(</span>arr<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> p <span class="token operator">=</span> arr<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> result <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> i<span class="token punctuation">,</span> j<span class="token punctuation">,</span> u<span class="token punctuation">,</span> v<span class="token punctuation">,</span> c<span class="token punctuation">;</span>
+  <span class="token keyword">const</span> len <span class="token operator">=</span> arr<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> len<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> arrI <span class="token operator">=</span> arr<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>arrI <span class="token operator">!==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      j <span class="token operator">=</span> result<span class="token punctuation">[</span>result<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>arr<span class="token punctuation">[</span>j<span class="token punctuation">]</span> <span class="token operator">&lt;</span> arrI<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> j<span class="token punctuation">;</span>
+        result<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      u <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+      v <span class="token operator">=</span> result<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+      <span class="token keyword">while</span> <span class="token punctuation">(</span>u <span class="token operator">&lt;</span> v<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        c <span class="token operator">=</span> <span class="token punctuation">(</span>u <span class="token operator">+</span> v<span class="token punctuation">)</span> <span class="token operator">&gt;&gt;</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>arr<span class="token punctuation">[</span>result<span class="token punctuation">[</span>c<span class="token punctuation">]</span><span class="token punctuation">]</span> <span class="token operator">&lt;</span> arrI<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          u <span class="token operator">=</span> c <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+          v <span class="token operator">=</span> c<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>arrI <span class="token operator">&lt;</span> arr<span class="token punctuation">[</span>result<span class="token punctuation">[</span>u<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>u <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          p<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> result<span class="token punctuation">[</span>u <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        result<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">=</span> i<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  u <span class="token operator">=</span> result<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+  v <span class="token operator">=</span> result<span class="token punctuation">[</span>u <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">while</span> <span class="token punctuation">(</span>u<span class="token operator">--</span> <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    result<span class="token punctuation">[</span>u<span class="token punctuation">]</span> <span class="token operator">=</span> v<span class="token punctuation">;</span>
+    v <span class="token operator">=</span> p<span class="token punctuation">[</span>v<span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="移动或创建节点"><a href="#移动或创建节点" class="header-anchor">#</a> 移动或创建节点</h3> <p>在上述最长子序列的原则, 我们实现对节点进行移动或创建</p> <div class="language-ts extra-class"><pre class="language-ts"><code><span class="token keyword">function</span> <span class="token function">patchKeyedChildren</span><span class="token punctuation">(</span>c1<span class="token punctuation">,</span> c2<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> parentAnchor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// 当上述两种情况都不满足时, 采用中间对比</span>
+  <span class="token keyword">let</span> s1 <span class="token operator">=</span> i<span class="token punctuation">;</span>
+  <span class="token keyword">let</span> s2 <span class="token operator">=</span> i<span class="token punctuation">;</span>
+
+  <span class="token comment">// 记录新节点需要处理的中间节点总数量</span>
+  <span class="token keyword">const</span> toBePatched <span class="token operator">=</span> e2 <span class="token operator">-</span> s2 <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+  <span class="token comment">// 记录当前处理的数量</span>
+  <span class="token keyword">let</span> patched <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 把新节点下标和key做映射表</span>
+  <span class="token keyword">const</span> keyToNewIndexMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Map</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 新旧节点索引映射表</span>
+  <span class="token keyword">const</span> newIndexToOldIndexMap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name"><span class="token builtin">Array</span></span><span class="token punctuation">(</span>toBePatched<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> moved <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> maxNewIndexSoFar <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token comment">// 初始化映射表</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> toBePatched<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> newIndexToOldIndexMap<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s2<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e2<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nextChild <span class="token operator">=</span> c2<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    nextChild<span class="token punctuation">.</span>key <span class="token operator">&amp;&amp;</span> keyToNewIndexMap<span class="token punctuation">.</span><span class="token keyword">set</span><span class="token punctuation">(</span>nextChild<span class="token punctuation">.</span>key<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 遍历旧节点</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> s1<span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> e1<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> prevChild <span class="token operator">=</span> c1<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 如果当前处理的数量已经大于新节点中间节点总数，那么旧节点直接删除就可以了</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>patched <span class="token operator">&gt;=</span> toBePatched<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">hostRemove</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">continue</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">let</span> newIndex<span class="token punctuation">;</span>
+
+    <span class="token comment">// 拿到旧节点在新节点对应的位置</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      newIndex <span class="token operator">=</span> keyToNewIndexMap<span class="token punctuation">.</span><span class="token keyword">get</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 如果用户没有设置key，那么就遍历所有，时间复杂度为O(n)</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> j <span class="token operator">=</span> s2<span class="token punctuation">;</span> j <span class="token operator">&lt;=</span> e2<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isSameVnodeType</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">,</span> c2<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          newIndex <span class="token operator">=</span> j<span class="token punctuation">;</span>
+          <span class="token keyword">break</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newIndex <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 没有匹配到节点, 直接删除</span>
+      <span class="token function">hostRemove</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">.</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>newIndex <span class="token operator">&gt;=</span> maxNewIndexSoFar<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        maxNewIndexSoFar <span class="token operator">=</span> newIndex<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 如果旧的节点在新的节点里，前一个索引没有比后面一个索引大就需要移动</span>
+        moved <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token comment">// 0 代表老的节点在新的节点里面是不存在的，所以要 +1</span>
+      newIndexToOldIndexMap<span class="token punctuation">[</span>newIndex <span class="token operator">-</span> s2<span class="token punctuation">]</span> <span class="token operator">=</span> i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+      <span class="token comment">// 更新对应的旧节点</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span>prevChild<span class="token punctuation">,</span> c2<span class="token punctuation">[</span>newIndex<span class="token punctuation">]</span><span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      patched<span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 找到最长递增子序列</span>
+  <span class="token keyword">const</span> increasingNewIndexSequence <span class="token operator">=</span> moved
+    <span class="token operator">?</span> <span class="token function">getSequence</span><span class="token punctuation">(</span>newIndexToOldIndexMap<span class="token punctuation">)</span>
+    <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">let</span> j <span class="token operator">=</span> increasingNewIndexSequence<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// 因为调用的DOM API 的insertBefore是需要插入到一个元素的前面，所以要使用倒序排列</span>
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> toBePatched <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> nextIndex <span class="token operator">=</span> i <span class="token operator">+</span> s2<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> nextChild <span class="token operator">=</span> c2<span class="token punctuation">[</span>nextIndex<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> anchor <span class="token operator">=</span> nextIndex <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">&lt;</span> c2<span class="token punctuation">.</span>length <span class="token operator">?</span> c2<span class="token punctuation">[</span>nextIndex <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">.</span>el <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>newIndexToOldIndexMap<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">===</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 当新节点在旧节点索引映射表为0 表示不存在 新建节点</span>
+      <span class="token function">patch</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">,</span> nextChild<span class="token punctuation">,</span> container<span class="token punctuation">,</span> parentComponent<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>moved<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 有需要移动的节点</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>j <span class="token operator">&lt;</span> <span class="token number">0</span> <span class="token operator">||</span> i <span class="token operator">!==</span> increasingNewIndexSequence<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token builtin">console</span><span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">&quot;移动位置&quot;</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">hostInsert</span><span class="token punctuation">(</span>nextChild<span class="token punctuation">.</span>el<span class="token punctuation">,</span> container<span class="token punctuation">,</span> anchor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        j<span class="token operator">--</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>整个算法的逻辑图如下</p> <p><img src="/Blog/assets/img/diff-summary.drawio.f023d39c.png" alt="image"></p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">3/29/2023, 2:39:52 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/Blog/dailyRecord/vue/VUE3-runtime-update.html" class="prev">
+        四、运行时更新
+      </a></span> <span class="next"><a href="/Blog/dailyRecord/unittest/hello-test.html">
+        初识单元测试
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/Blog/assets/js/app.0e74c7b5.js" defer></script><script src="/Blog/assets/js/2.fd75a44f.js" defer></script><script src="/Blog/assets/js/12.268653b6.js" defer></script>
+  </body>
+</html>
