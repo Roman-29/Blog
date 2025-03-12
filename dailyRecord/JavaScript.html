@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>JavaScript 高级程序设计（第四版）读书笔记 | Roman&#39;s Notebook</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/Blog/images/logo.png">
+    <meta name="description" content="📝每天记录一点点">
+    
+    <link rel="preload" href="/Blog/assets/css/0.styles.97ce9fae.css" as="style"><link rel="preload" href="/Blog/assets/js/app.d6f4b6a2.js" as="script"><link rel="preload" href="/Blog/assets/js/2.fd75a44f.js" as="script"><link rel="preload" href="/Blog/assets/js/35.53956048.js" as="script"><link rel="prefetch" href="/Blog/assets/js/10.ef8ad2af.js"><link rel="prefetch" href="/Blog/assets/js/11.6c4cb71a.js"><link rel="prefetch" href="/Blog/assets/js/12.bf292e9a.js"><link rel="prefetch" href="/Blog/assets/js/13.27d3af28.js"><link rel="prefetch" href="/Blog/assets/js/14.c90a7c8e.js"><link rel="prefetch" href="/Blog/assets/js/15.d1fb7a7e.js"><link rel="prefetch" href="/Blog/assets/js/16.090affc6.js"><link rel="prefetch" href="/Blog/assets/js/17.4e5df8a3.js"><link rel="prefetch" href="/Blog/assets/js/18.db68a2d0.js"><link rel="prefetch" href="/Blog/assets/js/19.78ffae18.js"><link rel="prefetch" href="/Blog/assets/js/20.326bfd19.js"><link rel="prefetch" href="/Blog/assets/js/21.4bc7c7af.js"><link rel="prefetch" href="/Blog/assets/js/22.d5f7595c.js"><link rel="prefetch" href="/Blog/assets/js/23.e48ece5c.js"><link rel="prefetch" href="/Blog/assets/js/24.4c1ca19a.js"><link rel="prefetch" href="/Blog/assets/js/25.97fa940f.js"><link rel="prefetch" href="/Blog/assets/js/26.acb8e14e.js"><link rel="prefetch" href="/Blog/assets/js/27.4233a341.js"><link rel="prefetch" href="/Blog/assets/js/28.a2ff22a3.js"><link rel="prefetch" href="/Blog/assets/js/29.6016abd9.js"><link rel="prefetch" href="/Blog/assets/js/3.c01d88b2.js"><link rel="prefetch" href="/Blog/assets/js/30.61781442.js"><link rel="prefetch" href="/Blog/assets/js/31.c4b84ed1.js"><link rel="prefetch" href="/Blog/assets/js/32.e426325a.js"><link rel="prefetch" href="/Blog/assets/js/33.90e060c3.js"><link rel="prefetch" href="/Blog/assets/js/34.7059796b.js"><link rel="prefetch" href="/Blog/assets/js/36.b2e386ad.js"><link rel="prefetch" href="/Blog/assets/js/37.8918b02a.js"><link rel="prefetch" href="/Blog/assets/js/38.16fe91ea.js"><link rel="prefetch" href="/Blog/assets/js/39.1a8073b2.js"><link rel="prefetch" href="/Blog/assets/js/4.accf9f2c.js"><link rel="prefetch" href="/Blog/assets/js/40.3383d598.js"><link rel="prefetch" href="/Blog/assets/js/41.85fae2a9.js"><link rel="prefetch" href="/Blog/assets/js/42.0404369c.js"><link rel="prefetch" href="/Blog/assets/js/43.bde5e9e5.js"><link rel="prefetch" href="/Blog/assets/js/44.babab1d1.js"><link rel="prefetch" href="/Blog/assets/js/45.3fa179d9.js"><link rel="prefetch" href="/Blog/assets/js/46.b3b4f85b.js"><link rel="prefetch" href="/Blog/assets/js/47.6759b2e2.js"><link rel="prefetch" href="/Blog/assets/js/48.64cdfd94.js"><link rel="prefetch" href="/Blog/assets/js/49.d58826b4.js"><link rel="prefetch" href="/Blog/assets/js/5.422be1ef.js"><link rel="prefetch" href="/Blog/assets/js/6.12713950.js"><link rel="prefetch" href="/Blog/assets/js/7.7a16dec8.js"><link rel="prefetch" href="/Blog/assets/js/8.10f0167f.js"><link rel="prefetch" href="/Blog/assets/js/9.e1456e0e.js">
+    <link rel="stylesheet" href="/Blog/assets/css/0.styles.97ce9fae.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/Blog/" class="home-link router-link-active"><!----> <span class="site-name">Roman's Notebook</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Vue3源码</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/Blog/dailyRecord/vue/VUE3-miniVue.html" class="sidebar-link">VUE3 源码解析</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-reactivity-core.html" class="sidebar-link">一、响应式核心(依赖收集和触发)</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-reactivity-advance.html" class="sidebar-link">二、响应式进阶(响应式 API)</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-core.html" class="sidebar-link">三、运行时核心</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-update.html" class="sidebar-link">四、运行时更新</a></li><li><a href="/Blog/dailyRecord/vue/VUE3-runtime-diff.html" class="sidebar-link">五、diff 更新算法</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>单元测试</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>GIS</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端模块化和打包工具</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>内功修炼</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端异常监控</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>总结</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>其他</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="javascript-高级程序设计-第四版-读书笔记"><a href="#javascript-高级程序设计-第四版-读书笔记" class="header-anchor">#</a> JavaScript 高级程序设计（第四版）读书笔记</h1> <h2 id="什么是javascript"><a href="#什么是javascript" class="header-anchor">#</a> 什么是JavaScript</h2> <p>JavaScript的实现包括以下3个部分：</p> <h3 id="核心-ecmascript"><a href="#核心-ecmascript" class="header-anchor">#</a> 核心（ECMAScript）</h3> <p>在基本的层面，它描述这门语言的如下部分：</p> <ul><li>语法</li> <li>类型</li> <li>语句</li> <li>关键字</li> <li>保留字</li> <li>操作符</li> <li>全局对象</li></ul> <h3 id="文档对象模型-dom"><a href="#文档对象模型-dom" class="header-anchor">#</a> 文档对象模型（DOM）</h3> <p><strong>文档对象模型</strong>（DOM，Document Object Model）是一个应用编程接口（API），用于在HTML中使用扩展的XML。</p> <p>DOM通过创建表示文档的树，让开发者可以随心所欲地控制网页的内容和结构。使用DOM API，可以轻松地删除、添加、替换、修改节点。</p> <h3 id="浏览器对象模型-bom"><a href="#浏览器对象模型-bom" class="header-anchor">#</a> 浏览器对象模型（BOM）</h3> <p>BOM主要针对浏览器窗口和子窗口（frame），不过人们通常会把任何特定于浏览器的扩展都归在BOM的范畴内。比如，下面就是这样一些扩展：</p> <ul><li>弹出新浏览器窗口的能力；</li> <li>移动、缩放和关闭浏览器窗口的能力；</li> <li><code>navigator</code>对象，提供关于浏览器的详尽信息；</li> <li><code>location</code>对象，提供浏览器加载页面的详尽信息；</li> <li><code>screen</code>对象，提供关于用户屏幕分辨率的详尽信息；</li> <li><code>performance</code>对象，提供浏览器内存占用、导航行为和时间统计的详尽信息；</li> <li>对cookie的支持；</li> <li>其他自定义对象，如<code>XMLHttpRequest</code>和IE的<code>ActiveXObject</code>。</li></ul> <h2 id="语言基础"><a href="#语言基础" class="header-anchor">#</a> 语言基础</h2> <h3 id="变量"><a href="#变量" class="header-anchor">#</a> 变量</h3> <h4 id="var与let"><a href="#var与let" class="header-anchor">#</a> var与let</h4> <p><code>let</code>跟<code>var</code>的作用差不多，但有着非常重要的区别。最明显的区别是，<code>let</code>声明的范围是块作用域，而<code>var</code>声明的范围是函数作用域。</p> <ol><li><p><strong>暂时性死区</strong></p> <p><code>let</code>与<code>var</code>的另一个重要的区别，就是<code>let</code>声明的变量不会在作用域中被提升。</p> <div class="language- extra-class"><pre class="language-text"><code>// name会被提升
+console.log(name); // undefined
+var name = 'Matt';
+
+// age不会被提升
+console.log(age); // ReferenceError：age没有定义
+let age = 26;
+</code></pre></div><p>在解析代码时，JavaScript引擎也会注意出现在块后面的<code>let</code>声明，只不过在此之前不能以任何方式来引用未声明的变量。在<code>let</code>声明之前的执行瞬间被称为“暂时性死区”（temporal dead zone），在此阶段引用任何后面才声明的变量都会抛出<code>ReferenceError</code>。</p></li> <li><p><strong>全局声明</strong></p> <p>与<code>var</code>关键字不同，使用<code>let</code>在全局作用域中声明的变量不会成为<code>window</code>对象的属性（<code>var</code>声明的变量则会）。</p> <div class="language- extra-class"><pre class="language-text"><code>var name = 'Matt';
+console.log(window.name); // 'Matt'
+
+let age = 26;
+console.log(window.age);  // undefined
+</code></pre></div><p>不过，<code>let</code>声明仍然是在全局作用域中发生的，相应变量会在页面的生命周期内存续。因此，为了避免<code>SyntaxError</code>，必须确保页面不会重复声明同一个变量。</p></li> <li><p><strong>条件声明</strong></p> <p>在使用<code>var</code>声明变量时，由于声明会被提升，JavaScript引擎会自动将多余的声明在作用域顶部合并为一个声明。因为<code>let</code>的作用域是块，所以不可能检查前面是否已经使用<code>let</code>声明过同名变量，同时也就不可能在没有声明的情况下声明它。</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;script&gt;
+  var name = 'Nicholas';
+  let age = 26;
+&lt;/script&gt;
+
+&lt;script&gt;
+  // 假设脚本不确定页面中是否已经声明了同名变量
+  // 那它可以假设还没有声明过
+
+  var name = 'Matt';
+  // 这里没问题，因为可以被作为一个提升声明来处理
+  // 不需要检查之前是否声明过同名变量
+
+  let age = 36;
+  // 如果age之前声明过，这里会报错
+&lt;/script&gt;
+</code></pre></div><p>使用<code>try</code>/<code>catch</code>语句或<code>typeof</code>操作符也不能解决，因为条件块中<code>let</code>声明的作用域仅限于该块。</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;script&gt;
+  let name = 'Nicholas';
+  let age = 36;
+&lt;/script&gt;
+
+&lt;script&gt;
+  // 假设脚本不确定页面中是否已经声明了同名变量
+  // 那它可以假设还没有声明过
+
+  if (typeof name === 'undefined') {
+    let name;
+  }
+  // name被限制在if {} 块的作用域内
+  // 因此这个赋值形同全局赋值
+  name = 'Matt';
+
+  try {
+    console.log(age) // 如果age没有声明过，则会报错
+  }
+  catch(error) {
+    let age;
+  }
+  // age被限制在catch {}块的作用域内
+  // 因此这个赋值形同全局赋值
+  age = 26;
+&lt;/script&gt;
+</code></pre></div><p>为此，对于<code>let</code>这个新的ES6声明关键字，不能依赖条件声明模式。</p> <blockquote><p><strong>注意</strong>　不能使用<code>let</code>进行条件式声明是件好事，因为条件声明是一种反模式，它让程序变得更难理解。如果你发现自己在使用这个模式，那一定有更好的替代方式。</p></blockquote></li> <li><p><strong>for循环中的let声明</strong></p> <p>在<code>let</code>出现之前，<code>for</code>循环定义的迭代变量会渗透到循环体外部：</p> <div class="language- extra-class"><pre class="language-text"><code>for (var i = 0; i &lt; 5; ++i) {
+  // 循环逻辑
+}
+console.log(i); // 5
+</code></pre></div><p>改成使用<code>let</code>之后，这个问题就消失了，因为迭代变量的作用域仅限于<code>for</code>循环块内部：</p> <div class="language- extra-class"><pre class="language-text"><code>for (let i = 0; i &lt; 5; ++i) {
+  // 循环逻辑
+}
+console.log(i); // ReferenceError: i没有定义
+</code></pre></div><p>在使用<code>var</code>的时候，最常见的问题就是对迭代变量的奇特声明和修改：</p> <div class="language- extra-class"><pre class="language-text"><code>for (var i = 0; i &lt; 5; ++i) {
+    setTimeout(() =&gt; console.log(i), 0)
+}
+// 你可能以为会输出0、1、2、3、4
+// 实际上会输出5、5、5、5、5
+</code></pre></div><p>之所以会这样，是因为在退出循环时，迭代变量保存的是导致循环退出的值：5。在之后执行超时逻辑时，所有的<code>i</code>都是同一个变量，因而输出的都是同一个最终值。</p> <p>而在使用<code>let</code>声明迭代变量时，JavaScript引擎在后台会为每个迭代循环声明一个新的迭代变量。每个<code>setTimeout</code>引用的都是不同的变量实例，所以<code>console.log</code>输出的是我们期望的值，也就是循环执行过程中每个迭代变量的值。</p> <div class="language- extra-class"><pre class="language-text"><code>for (let i = 0; i &lt; 5; ++i) {
+    setTimeout(() =&gt; console.log(i), 0)
+}
+// 会输出0、1、2、3、4
+</code></pre></div><p>这种每次迭代声明一个独立变量实例的行为适用于所有风格的<code>for</code>循环，包括<code>for-in</code>和<code>for-of</code>循环。</p></li></ol> <h3 id="数据类型"><a href="#数据类型" class="header-anchor">#</a> 数据类型</h3> <p>ECMAScript有 6种简单数据类型（也称为原始类型）：Undefined、Null、Boolean、Number、 String 和 Symbol。Symbol（符号）是 ECMAScript 6新增的。还有一种复杂数据类型叫 Object（对象）。Object 是一种无序名值对的集合。</p> <h4 id="typeof-操作符"><a href="#typeof-操作符" class="header-anchor">#</a> typeof 操作符</h4> <p>因为ECMAScript的类型系统是松散的，所以需要一种手段来确定任意变量的数据类型。<code>typeof</code>操作符就是为此而生的。对一个值使用<code>typeof</code>操作符会返回下列字符串之一：</p> <ul><li><code>&quot;undefined&quot;</code>表示值未定义；</li> <li><code>&quot;boolean&quot;</code>表示值为布尔值；</li> <li><code>&quot;string&quot;</code>表示值为字符串；</li> <li><code>&quot;number&quot;</code>表示值为数值；</li> <li><code>&quot;object&quot;</code>表示值为对象（而不是函数）或<code>null</code>；</li> <li><code>&quot;function&quot;</code>表示值为函数；</li> <li><code>&quot;symbol&quot;</code>表示值为符号。</li></ul> <h4 id="undefined类型"><a href="#undefined类型" class="header-anchor">#</a> <code>Undefined</code>类型</h4> <p><code>Undefined</code>类型只有一个值，就是特殊值<code>undefined</code>。当使用<code>var</code>或<code>let</code>声明了变量但没有初始化时，就相当于给变量赋予了<code>undefined</code>值</p> <h4 id="null类型"><a href="#null类型" class="header-anchor">#</a> <code>Null</code>类型</h4> <p><code>Null</code>类型同样只有一个值，即特殊值<code>null</code>。逻辑上讲，<code>null</code>值表示一个空对象指针，这也是给<code>typeof</code>传一个<code>null</code>会返回<code>&quot;object&quot;</code>的原因</p> <h4 id="boolean类型"><a href="#boolean类型" class="header-anchor">#</a> <code>Boolean</code>类型</h4> <p><code>Boolean</code>（布尔值）类型是ECMAScript中使用最频繁的类型之一，有两个字面值：<code>true</code>和<code>false</code>。这两个布尔值不同于数值，因此<code>true</code>不等于1，<code>false</code>不等于0。</p> <h4 id="number类型"><a href="#number类型" class="header-anchor">#</a> <code>Number</code>类型</h4> <p>ECMAScript中最有意思的数据类型或许就是 Number 了。Number 类型使用 IEEE 754格式表示整 数和浮点值（在某些语言中也叫双精度值）。不同的数值类型相应地也有不同的数值字面量格式。</p> <h4 id="string类型"><a href="#string类型" class="header-anchor">#</a> <code>String</code>类型</h4> <p>String（字符串）数据类型表示零或多个 16 位 Unicode 字符序列。</p> <h4 id="symbol-类型"><a href="#symbol-类型" class="header-anchor">#</a> <code>Symbol</code> 类型</h4> <p>Symbol（符号）是 ECMAScript 6新增的数据类型。符号是原始值，且符号实例是唯一、不可变的。 符号的用途是确保对象属性使用唯一标识符，不会发生属性冲突的危险。</p> <h4 id="object-类型"><a href="#object-类型" class="header-anchor">#</a> <code>Object</code> 类型</h4> <p>ECMAScript中的对象其实就是一组数据和功能的集合。对象通过 new 操作符后跟对象类型的名称 来创建。开发者可以通过创建 Object 类型的实例来创建自己的对象，然后再给对象添加属性和方法</p> <h2 id="变量、作用域与内存"><a href="#变量、作用域与内存" class="header-anchor">#</a> 变量、作用域与内存</h2> <h3 id="原始值与引用值"><a href="#原始值与引用值" class="header-anchor">#</a> 原始值与引用值</h3> <p>ECMAScript 变量可以包含两种不同类型的数据：原始值和引用值。原始值（primitive value）就是 最简单的数据，引用值（reference value）则是由多个值构成的对象。</p> <p>在把一个值赋给变量时，JavaScript 引擎必须确定这个值是原始值还是引用值。上一章讨论了 6 种原始值：Undefined、Null、Boolean、Number、String 和 Symbol。保存原始值的变量是按值（by value）访问的，因为我们操作的就是存储在变量中的实际值。</p> <h3 id="执行上下文与作用域"><a href="#执行上下文与作用域" class="header-anchor">#</a> 执行上下文与作用域</h3> <p>执行上下文（以下简称“上下文”）的概念在 JavaScript中是颇为重要的。变量或函数的上下文决定了它们可以访问哪些数据，以及它们的行为。每个上下文都有一个关联的变量对象（variable object）， 而这个上下文中定义的所有变量和函数都存在于这个对象上。虽然无法通过代码访问变量对象，但后台处理数据会用到它。</p> <p>每个函数调用都有自己的上下文。当代码执行流进入函数时，函数的上下文被推到一个上下文栈上。 在函数执行完之后，上下文栈会弹出该函数上下文，将控制权返还给之前的执行上下文。ECMAScript 程序的执行流就是通过这个上下文栈进行控制的。</p> <p>上下文中的代码在执行的时候，会创建变量对象的一个作用域链（scope chain）。这个作用域链决定了各级上下文中的代码在访问变量和函数时的顺序。代码正在执行的上下文的变量对象始终位于作用域 链的最前端。如果上下文是函数，则其活动对象（activation object）用作变量对象。活动对象最初只有 一个定义变量：arguments。（全局上下文中没有这个变量。）作用域链中的下一个变量对象来自包含上 下文，再下一个对象来自再下一个包含上下文。以此类推直至全局上下文；全局上下文的变量对象始终是作用域链的最后一个变量对象。</p> <h3 id="垃圾回收"><a href="#垃圾回收" class="header-anchor">#</a> 垃圾回收</h3> <p>JavaScript 是使用垃圾回收的语言，也就是说执行环境负责在代码执行时管理内存。在 C和 C++等 语言中，跟踪内存使用对开发者来说是个很大的负担，也是很多问题的来源。JavaScript 为开发者卸下 了这个负担，通过自动内存管理实现内存分配和闲置资源回收。基本思路很简单：确定哪个变量不会再 使用，然后释放它占用的内存。这个过程是周期性的，即垃圾回收程序每隔一定时间（或者说在代码执行过程中某个预定的收集时间）就会自动运行。垃圾回收过程是一个近似且不完美的方案，因为某块内存是否还有用，属于“不可判定的”问题，意味着靠算法是解决不了的。</p> <h4 id="标记清理"><a href="#标记清理" class="header-anchor">#</a> 标记清理</h4> <p>JavaScript 最常用的垃圾回收策略是标记清理（mark-and-sweep）。当变量进入上下文，比如在函数 内部声明一个变量时，这个变量会被加上存在于上下文中的标记。而在上下文中的变量，逻辑上讲，永 远不应该释放它们的内存，因为只要上下文中的代码在运行，就有可能用到它们。当变量离开上下文时，也会被加上离开上下文的标记。</p> <p>垃圾回收程序运行的时候，会标记内存中存储的所有变量（记住，标记方法有很多种）。然后，它 会将所有在上下文中的变量，以及被在上下文中的变量引用的变量的标记去掉。在此之后再被加上标记 的变量就是待删除的了，原因是任何在上下文中的变量都访问不到它们了。随后垃圾回收程序做一次内存清理，销毁带标记的所有值并收回它们的内存。</p> <h4 id="性能"><a href="#性能" class="header-anchor">#</a> 性能</h4> <p>垃圾回收程序会周期性运行，如果内存中分配了很多变量，则可能造成性能损失，因此垃圾回收的 时间调度很重要。尤其是在内存有限的移动设备上，垃圾回收有可能会明显拖慢渲染的速度和帧速率。 开发者不知道什么时候运行时会收集垃圾，因此最好的办法是在写代码时就要做到：无论什么时候开始 收集垃圾，都能让它尽快结束工作。</p> <p>现代垃圾回收程序会基于对 JavaScript 运行时环境的探测来决定何时运行。探测机制因引擎而异，但基本上都是根据已分配对象的大小和数量来判断的。比如，根据 V8团队 2016年的一篇博文的说法： “在一次完整的垃圾回收之后，V8的堆增长策略会根据活跃对象的数量外加一些余量来确定何时再次垃圾回收。”</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">5/15/2021, 1:21:11 PM</span></div></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/Blog/assets/js/app.d6f4b6a2.js" defer></script><script src="/Blog/assets/js/2.fd75a44f.js" defer></script><script src="/Blog/assets/js/35.53956048.js" defer></script>
+  </body>
+</html>

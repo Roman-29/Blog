@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>OpenLayers 源码分析(上篇) | Roman&#39;s Notebook</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/Blog/images/logo.png">
+    <meta name="description" content="📝每天记录一点点">
+    
+    <link rel="preload" href="/Blog/assets/css/0.styles.97ce9fae.css" as="style"><link rel="preload" href="/Blog/assets/js/app.d6f4b6a2.js" as="script"><link rel="preload" href="/Blog/assets/js/2.fd75a44f.js" as="script"><link rel="preload" href="/Blog/assets/js/10.ef8ad2af.js" as="script"><link rel="prefetch" href="/Blog/assets/js/11.6c4cb71a.js"><link rel="prefetch" href="/Blog/assets/js/12.bf292e9a.js"><link rel="prefetch" href="/Blog/assets/js/13.27d3af28.js"><link rel="prefetch" href="/Blog/assets/js/14.c90a7c8e.js"><link rel="prefetch" href="/Blog/assets/js/15.d1fb7a7e.js"><link rel="prefetch" href="/Blog/assets/js/16.090affc6.js"><link rel="prefetch" href="/Blog/assets/js/17.4e5df8a3.js"><link rel="prefetch" href="/Blog/assets/js/18.db68a2d0.js"><link rel="prefetch" href="/Blog/assets/js/19.78ffae18.js"><link rel="prefetch" href="/Blog/assets/js/20.326bfd19.js"><link rel="prefetch" href="/Blog/assets/js/21.4bc7c7af.js"><link rel="prefetch" href="/Blog/assets/js/22.d5f7595c.js"><link rel="prefetch" href="/Blog/assets/js/23.e48ece5c.js"><link rel="prefetch" href="/Blog/assets/js/24.4c1ca19a.js"><link rel="prefetch" href="/Blog/assets/js/25.97fa940f.js"><link rel="prefetch" href="/Blog/assets/js/26.acb8e14e.js"><link rel="prefetch" href="/Blog/assets/js/27.4233a341.js"><link rel="prefetch" href="/Blog/assets/js/28.a2ff22a3.js"><link rel="prefetch" href="/Blog/assets/js/29.6016abd9.js"><link rel="prefetch" href="/Blog/assets/js/3.c01d88b2.js"><link rel="prefetch" href="/Blog/assets/js/30.61781442.js"><link rel="prefetch" href="/Blog/assets/js/31.c4b84ed1.js"><link rel="prefetch" href="/Blog/assets/js/32.e426325a.js"><link rel="prefetch" href="/Blog/assets/js/33.90e060c3.js"><link rel="prefetch" href="/Blog/assets/js/34.7059796b.js"><link rel="prefetch" href="/Blog/assets/js/35.53956048.js"><link rel="prefetch" href="/Blog/assets/js/36.b2e386ad.js"><link rel="prefetch" href="/Blog/assets/js/37.8918b02a.js"><link rel="prefetch" href="/Blog/assets/js/38.16fe91ea.js"><link rel="prefetch" href="/Blog/assets/js/39.1a8073b2.js"><link rel="prefetch" href="/Blog/assets/js/4.accf9f2c.js"><link rel="prefetch" href="/Blog/assets/js/40.3383d598.js"><link rel="prefetch" href="/Blog/assets/js/41.85fae2a9.js"><link rel="prefetch" href="/Blog/assets/js/42.0404369c.js"><link rel="prefetch" href="/Blog/assets/js/43.bde5e9e5.js"><link rel="prefetch" href="/Blog/assets/js/44.babab1d1.js"><link rel="prefetch" href="/Blog/assets/js/45.3fa179d9.js"><link rel="prefetch" href="/Blog/assets/js/46.b3b4f85b.js"><link rel="prefetch" href="/Blog/assets/js/47.6759b2e2.js"><link rel="prefetch" href="/Blog/assets/js/48.64cdfd94.js"><link rel="prefetch" href="/Blog/assets/js/49.d58826b4.js"><link rel="prefetch" href="/Blog/assets/js/5.422be1ef.js"><link rel="prefetch" href="/Blog/assets/js/6.12713950.js"><link rel="prefetch" href="/Blog/assets/js/7.7a16dec8.js"><link rel="prefetch" href="/Blog/assets/js/8.10f0167f.js"><link rel="prefetch" href="/Blog/assets/js/9.e1456e0e.js">
+    <link rel="stylesheet" href="/Blog/assets/css/0.styles.97ce9fae.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/Blog/" class="home-link router-link-active"><!----> <span class="site-name">Roman's Notebook</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vue3源码</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>单元测试</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>GIS</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/Blog/dailyRecord/gis/OpenLayers.html" class="sidebar-link">OpenLayers 基础</a></li><li><a href="/Blog/dailyRecord/gis/OLSourceCode1.html" aria-current="page" class="active sidebar-link">OpenLayers 源码分析(上篇)</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#简介" class="sidebar-link">简介</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#阅读对象人群" class="sidebar-link">阅读对象人群</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#版本及源码地址" class="sidebar-link">版本及源码地址</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#分析目录结构" class="sidebar-link">分析目录结构</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#图层渲染流程图" class="sidebar-link">图层渲染流程图</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#地图-map" class="sidebar-link">地图 (Map)</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-map" class="sidebar-link">ol/map</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-pluggablemap" class="sidebar-link">ol/PluggableMap</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-renderer-composite" class="sidebar-link">ol/renderer/Composite</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#layer" class="sidebar-link">Layer</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-layer-group" class="sidebar-link">ol/layer/Group</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-layer-layer" class="sidebar-link">ol/layer/Layer</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#renderer" class="sidebar-link">Renderer</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-renderer-canvas-imagelayer" class="sidebar-link">ol/renderer/canvas/ImageLayer</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-renderer-canvas-tilelayer" class="sidebar-link">ol/renderer/canvas/TileLayer</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#ol-renderer-canvas-vectorlayer" class="sidebar-link">ol/renderer/canvas/VectorLayer</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode1.html#总结" class="sidebar-link">总结</a></li></ul></li><li><a href="/Blog/dailyRecord/gis/OLSourceCode2.html" class="sidebar-link">OpenLayers 源码分析(下篇)</a></li><li><a href="/Blog/dailyRecord/gis/ArcgisAPI.html" class="sidebar-link">Arcgis API</a></li><li><a href="/Blog/dailyRecord/gis/GISsystem.html" class="sidebar-link">GIS 体系介绍</a></li><li><a href="/Blog/dailyRecord/gis/SuperMapWebGL.html" class="sidebar-link">SuperMap iClient 3D for WebGL</a></li><li><a href="/Blog/dailyRecord/gis/SuperMap3DStudy.html" class="sidebar-link">三维 WebGIS 学习笔记</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端模块化和打包工具</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>内功修炼</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端异常监控</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>总结</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>其他</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="openlayers-源码分析-上篇"><a href="#openlayers-源码分析-上篇" class="header-anchor">#</a> OpenLayers 源码分析(上篇)</h1> <h2 id="简介"><a href="#简介" class="header-anchor">#</a> 简介</h2> <p>上篇主要讲解地图的渲染, 包括image tile vector三种图层的渲染方式</p> <p>下篇主要讲解图层source的相关内容, 即图层的数据加载部分, 以及视图发生变化后的处理机制</p> <h3 id="阅读对象人群"><a href="#阅读对象人群" class="header-anchor">#</a> 阅读对象人群</h3> <p>对openlayers有一定的了解, 最好是使用过openlayers. 并且想了解openlayers地图引擎的工作原理.</p> <p>如果没有使用过openlayers, 可以看看下面几个官方案例, 简单了解一下openlayers</p> <p><a href="https://openlayers.org/en/latest/examples/arcgis-image.html" target="_blank" rel="noopener noreferrer">使用ImageLayer加载arcgis服务<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p><a href="https://openlayers.org/en/latest/examples/arcgis-tiled.html" target="_blank" rel="noopener noreferrer">使用TileLayer加载arcgis服务<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p><a href="https://openlayers.org/en/latest/examples/geojson.html" target="_blank" rel="noopener noreferrer">加载geojson数据<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <p><a href="https://openlayers.org/en/latest/examples/hitdetect-vector.html" target="_blank" rel="noopener noreferrer">加载服务器上的geojson数据<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></p> <h2 id="版本及源码地址"><a href="#版本及源码地址" class="header-anchor">#</a> 版本及源码地址</h2> <p>本次openlayers源码学习, 研究的是openlayers 6.5.0版本</p> <p>https://github.com/openlayers/openlayers/tree/v6.5.0</p> <h2 id="分析目录结构"><a href="#分析目录结构" class="header-anchor">#</a> 分析目录结构</h2> <p>首先拿到源码后, 最好是整体过一遍, 看看openlayers的目录结构, 结合API文档, 查看什么功能对应什么路径, 对源码有个基本的认识. 整体来说openlayers的目录结构还是比较清晰明了的</p> <h2 id="图层渲染流程图"><a href="#图层渲染流程图" class="header-anchor">#</a> 图层渲染流程图</h2> <p>本篇将围绕这张流程图 对地图和图层渲染进行分析</p> <p><img src="/Blog/assets/img/07.3a1035c4.png" alt="image"></p> <h2 id="地图-map"><a href="#地图-map" class="header-anchor">#</a> 地图 (Map)</h2> <p>地图是我们阅读源码的起点, 一切的一切都要从这说起</p> <p>ol/Map 作为构建地图的主入口，继承自 ol/PluggableMap，主要逻辑在 ol/PluggableMap 中实现</p> <p><img src="/Blog/assets/img/06.47db26fc.png" alt="image"></p> <h3 id="ol-map"><a href="#ol-map" class="header-anchor">#</a> ol/map</h3> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">Map</span> <span class="token keyword">extends</span> <span class="token class-name">PluggableMap</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    options <span class="token operator">=</span> <span class="token function">assign</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>options<span class="token punctuation">.</span>controls<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 默认控件</span>
+      options<span class="token punctuation">.</span>controls <span class="token operator">=</span> <span class="token function">defaultControls</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>options<span class="token punctuation">.</span>interactions<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 默认交互事件</span>
+      options<span class="token punctuation">.</span>interactions <span class="token operator">=</span> <span class="token function">defaultInteractions</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        onFocusOnly<span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span>options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token function">createRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">CompositeMapRenderer</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> Map<span class="token punctuation">;</span>
+</code></pre></div><h3 id="ol-pluggablemap"><a href="#ol-pluggablemap" class="header-anchor">#</a> ol/PluggableMap</h3> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">PluggableMap</span> <span class="token keyword">extends</span> <span class="token class-name">BaseObject</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 创建内部属性</span>
+    <span class="token keyword">const</span> optionsInternal <span class="token operator">=</span> <span class="token function">createOptionsInternal</span><span class="token punctuation">(</span>options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 地图渲染函数</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function-variable function">animationDelay_</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>animationDelayKey_ <span class="token operator">=</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderFrame_</span><span class="token punctuation">(</span>Date<span class="token punctuation">.</span><span class="token function">now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 构建DOM——ol-viewport 装载图层数据等</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_ <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">.</span>className <span class="token operator">=</span>
+      <span class="token string">'ol-viewport'</span> <span class="token operator">+</span> <span class="token punctuation">(</span><span class="token string">'ontouchstart'</span> <span class="token keyword">in</span> window <span class="token operator">?</span> <span class="token string">' ol-touch'</span> <span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">.</span>style<span class="token punctuation">.</span>position <span class="token operator">=</span> <span class="token string">'relative'</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">.</span>style<span class="token punctuation">.</span>overflow <span class="token operator">=</span> <span class="token string">'hidden'</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">.</span>style<span class="token punctuation">.</span>width <span class="token operator">=</span> <span class="token string">'100%'</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">.</span>style<span class="token punctuation">.</span>height <span class="token operator">=</span> <span class="token string">'100%'</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 子容器ol-overlaycontainer、ol-overlaycontainer-stopevent</span>
+    <span class="token operator">...</span>
+
+    <span class="token comment">// 切片请求队列, 如果是tileLayer会用到</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileQueue_ <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TileQueue</span><span class="token punctuation">(</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTilePriority</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleTileChange_</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 地图浏览事件、LAYERGROUP、VIEW、SIZE、SIZE的change事件</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      <span class="token function">getChangeEventType</span><span class="token punctuation">(</span>MapProperty<span class="token punctuation">.</span><span class="token constant">LAYERGROUP</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>handleLayerGroupChanged_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      <span class="token function">getChangeEventType</span><span class="token punctuation">(</span>MapProperty<span class="token punctuation">.</span><span class="token constant">VIEW</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>handleViewChanged_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      <span class="token function">getChangeEventType</span><span class="token punctuation">(</span>MapProperty<span class="token punctuation">.</span><span class="token constant">SIZE</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>handleSizeChanged_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      <span class="token function">getChangeEventType</span><span class="token punctuation">(</span>MapProperty<span class="token punctuation">.</span><span class="token constant">TARGET</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>handleTargetChanged_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 设置内部属性会触发上面绑定的监听, 引发地图render</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setProperties</span><span class="token punctuation">(</span>optionsInternal<span class="token punctuation">.</span>values<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">createOptionsInternal</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    controls<span class="token operator">:</span> controls<span class="token punctuation">,</span> <span class="token comment">// 地图控件, 如果未指定，则使用 ol/control〜defaults</span>
+    interactions<span class="token operator">:</span> interactions<span class="token punctuation">,</span> <span class="token comment">// 地图的交互, 如果未指定，则使用 ol/interaction〜defaults</span>
+    keyboardEventTarget<span class="token operator">:</span> keyboardEventTarget<span class="token punctuation">,</span> <span class="token comment">// 监听键盘事件的DOM元素, 默认</span>
+    overlays<span class="token operator">:</span> overlays<span class="token punctuation">,</span>
+    values<span class="token operator">:</span> values<span class="token punctuation">,</span> <span class="token comment">// 包括LAYERGROUP,TARGET,VIEW</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">handleTargetChanged_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// target 可能会是 undefined, null, a string or an Element.</span>
+    <span class="token comment">// 如果是 string 会找到对应ID的DOM.</span>
+    <span class="token comment">// 如果找不到对应的DOM元素 就移除 viewport.</span>
+    <span class="token comment">// 如果找到对应DOM元素 会将viewport element 添加进DOM.</span>
+
+    <span class="token keyword">let</span> targetElement<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTarget</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      targetElement <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTargetElement</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>mapBrowserEventHandler_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 如果为true, 说明之前有一个target是用过的, 需要移除DOM元素的监听事件</span>
+      <span class="token operator">...</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>mapBrowserEventHandler_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+      <span class="token function">removeNode</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>targetElement<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 没有找到DOM元素, 清除randerer</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      targetElement<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewport_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>renderer_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 创建 renderer/Composite类</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>renderer_ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">createRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token comment">// 监听各种事件</span>
+      <span class="token operator">...</span>
+
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>handleResize_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>handleResize_ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">updateSize</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        window<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>EventType<span class="token punctuation">.</span><span class="token constant">RESIZE</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>handleResize_<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 调用setSize, 触发this.render</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">updateSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">handleSizeChanged_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getAnimating</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">resolveConstraints</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">handleViewChanged_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 如果曾经有绑定过View, 先清除监听</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewPropertyListenerKey_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">unlistenByKey</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewPropertyListenerKey_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>viewPropertyListenerKey_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewChangeListenerKey_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">unlistenByKey</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>viewChangeListenerKey_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>viewChangeListenerKey_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> view <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>view<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 重新计算viewport_元素的size大小并将保存在view对象上</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">updateViewportSize_</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      <span class="token keyword">this</span><span class="token punctuation">.</span>viewPropertyListenerKey_ <span class="token operator">=</span> <span class="token function">listen</span><span class="token punctuation">(</span>
+        view<span class="token punctuation">,</span>
+        ObjectEventType<span class="token punctuation">.</span><span class="token constant">PROPERTYCHANGE</span><span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>handleViewPropertyChanged_<span class="token punctuation">,</span>
+        <span class="token keyword">this</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>viewChangeListenerKey_ <span class="token operator">=</span> <span class="token function">listen</span><span class="token punctuation">(</span>
+        view<span class="token punctuation">,</span>
+        EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>handleViewPropertyChanged_<span class="token punctuation">,</span>
+        <span class="token keyword">this</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+      view<span class="token punctuation">.</span><span class="token function">resolveConstraints</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">/*
+    window.requestAnimationFrame() 告诉浏览器——你希望执行一个动画，
+    并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。
+    该方法需要传入一个回调函数作为参数，
+    该回调函数会在浏览器下一次重绘之前执行
+  */</span>
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>renderer_ <span class="token operator">&amp;&amp;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>animationDelayKey_ <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>animationDelayKey_ <span class="token operator">=</span> <span class="token function">requestAnimationFrame</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>animationDelay_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 渲染视图</span>
+  <span class="token function">renderFrame_</span><span class="token punctuation">(</span><span class="token parameter">time</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> size <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> view <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getView</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> previousFrameState <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>frameState_<span class="token punctuation">;</span>
+    <span class="token comment">/** @type {?FrameState} */</span>
+    <span class="token keyword">let</span> frameState <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>size <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">&amp;&amp;</span> <span class="token function">hasArea</span><span class="token punctuation">(</span>size<span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> view <span class="token operator">&amp;&amp;</span> view<span class="token punctuation">.</span><span class="token function">isDef</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> viewHints <span class="token operator">=</span> view<span class="token punctuation">.</span><span class="token function">getHints</span><span class="token punctuation">(</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>frameState_ <span class="token operator">?</span> <span class="token keyword">this</span><span class="token punctuation">.</span>frameState_<span class="token punctuation">.</span>viewHints <span class="token operator">:</span> <span class="token keyword">undefined</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> viewState <span class="token operator">=</span> view<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token comment">// 当前视图的状态, 这个非常重要, 后面图层的数据加载和渲染完全是依据这个来的</span>
+      frameState <span class="token operator">=</span> <span class="token punctuation">{</span>
+        animate<span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+        coordinateToPixelTransform<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>coordinateToPixelTransform_<span class="token punctuation">,</span>
+        declutterTree<span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">,</span>
+        extent<span class="token operator">:</span> <span class="token function">getForViewAndSize</span><span class="token punctuation">(</span>
+          viewState<span class="token punctuation">.</span>center<span class="token punctuation">,</span>
+          viewState<span class="token punctuation">.</span>resolution<span class="token punctuation">,</span>
+          viewState<span class="token punctuation">.</span>rotation<span class="token punctuation">,</span>
+          size
+        <span class="token punctuation">)</span><span class="token punctuation">,</span>
+        index<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>frameIndex_<span class="token operator">++</span><span class="token punctuation">,</span>
+        layerIndex<span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+        layerStatesArray<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayerGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getLayerStatesArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        pixelRatio<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>pixelRatio_<span class="token punctuation">,</span>
+        pixelToCoordinateTransform<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>pixelToCoordinateTransform_<span class="token punctuation">,</span>
+        postRenderFunctions<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        size<span class="token operator">:</span> size<span class="token punctuation">,</span>
+        tileQueue<span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileQueue_<span class="token punctuation">,</span>
+        time<span class="token operator">:</span> time<span class="token punctuation">,</span>
+        usedTiles<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+        viewState<span class="token operator">:</span> viewState<span class="token punctuation">,</span>
+        viewHints<span class="token operator">:</span> viewHints<span class="token punctuation">,</span>
+        wantedTiles<span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>frameState_ <span class="token operator">=</span> frameState<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>renderer_<span class="token punctuation">.</span><span class="token function">renderFrame</span><span class="token punctuation">(</span>frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>postRenderTimeoutHandle_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>postRenderTimeoutHandle_ <span class="token operator">=</span> <span class="token function">setTimeout</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>postRenderTimeoutHandle_ <span class="token operator">=</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+        <span class="token comment">// 处理切片图层</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handlePostRender</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="ol-renderer-composite"><a href="#ol-renderer-composite" class="header-anchor">#</a> ol/renderer/Composite</h3> <p>拿到了 frameState 后, 就可以对地图做渲染了.</p> <p>frameState 关键属性, 及说明:</p> <table><thead><tr><th>属性名</th> <th>来源</th> <th>简介</th></tr></thead> <tbody><tr><td>layerStatesArray</td> <td>LayerGroup.getLayerStatesArray()</td> <td>拿到每个图层的 state</td></tr> <tr><td>layerState</td> <td>layer.getLayerState()</td> <td>包含 opacity,sourceState,visible,zIndex,以及图层自身 等图层基本状态</td></tr> <tr><td>viewState</td> <td>view.getState()</td> <td>包括当前视图的中心点, 分辨率等</td></tr></tbody></table> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">CompositeMapRenderer</span> <span class="token keyword">extends</span> <span class="token class-name">MapRenderer</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">map</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span>map<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 构建layers的dom容器, 并插入</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>element_ <span class="token operator">=</span> document<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> style <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>element_<span class="token punctuation">.</span>style<span class="token punctuation">;</span>
+    style<span class="token punctuation">.</span>position <span class="token operator">=</span> <span class="token string">'absolute'</span><span class="token punctuation">;</span>
+    style<span class="token punctuation">.</span>width <span class="token operator">=</span> <span class="token string">'100%'</span><span class="token punctuation">;</span>
+    style<span class="token punctuation">.</span>height <span class="token operator">=</span> <span class="token string">'100%'</span><span class="token punctuation">;</span>
+    style<span class="token punctuation">.</span>zIndex <span class="token operator">=</span> <span class="token string">'0'</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>element_<span class="token punctuation">.</span>className <span class="token operator">=</span> <span class="token constant">CLASS_UNSELECTABLE</span> <span class="token operator">+</span> <span class="token string">' ol-layers'</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> container <span class="token operator">=</span> map<span class="token punctuation">.</span><span class="token function">getViewport</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    container<span class="token punctuation">.</span><span class="token function">insertBefore</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>element_<span class="token punctuation">,</span> container<span class="token punctuation">.</span>firstChild <span class="token operator">||</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">renderFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchRenderEvent</span><span class="token punctuation">(</span>RenderEventType<span class="token punctuation">.</span><span class="token constant">PRECOMPOSE</span><span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> layerStatesArray <span class="token operator">=</span> frameState<span class="token punctuation">.</span>layerStatesArray<span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">a<span class="token punctuation">,</span> b</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> a<span class="token punctuation">.</span>zIndex <span class="token operator">-</span> b<span class="token punctuation">.</span>zIndex<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> viewState <span class="token operator">=</span> frameState<span class="token punctuation">.</span>viewState<span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>children_<span class="token punctuation">.</span>length <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> declutterLayers <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> previousElement <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> ii <span class="token operator">=</span> layerStatesArray<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> ii<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> layerState <span class="token operator">=</span> layerStatesArray<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      frameState<span class="token punctuation">.</span>layerIndex <span class="token operator">=</span> i<span class="token punctuation">;</span>
+      <span class="token comment">/** 判断是否需要加载layer 判断条件包括:
+       * 1. visible
+       * 2. 是否超出resolution范围(max/min)
+       * 3. 是否超出zoom范围(max/min) 
+       * 4. SourceState是否为ready
+      */</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>
+        <span class="token operator">!</span><span class="token function">inView</span><span class="token punctuation">(</span>layerState<span class="token punctuation">,</span> viewState<span class="token punctuation">)</span> <span class="token operator">||</span>
+        <span class="token punctuation">(</span>layerState<span class="token punctuation">.</span>sourceState <span class="token operator">!=</span> SourceState<span class="token punctuation">.</span><span class="token constant">READY</span> <span class="token operator">&amp;&amp;</span>
+          layerState<span class="token punctuation">.</span>sourceState <span class="token operator">!=</span> SourceState<span class="token punctuation">.</span><span class="token constant">UNDEFINED</span><span class="token punctuation">)</span>
+      <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">const</span> layer <span class="token operator">=</span> layerState<span class="token punctuation">.</span>layer<span class="token punctuation">;</span>
+      <span class="token comment">// 对每个图层进行render, 得到图层的DOM元素</span>
+      <span class="token keyword">const</span> element <span class="token operator">=</span> layer<span class="token punctuation">.</span><span class="token function">render</span><span class="token punctuation">(</span>frameState<span class="token punctuation">,</span> previousElement<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>element<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">continue</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>element <span class="token operator">!==</span> previousElement<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>children_<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>element<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        previousElement <span class="token operator">=</span> element<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">replaceChildren</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>element_<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>children_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchRenderEvent</span><span class="token punctuation">(</span>RenderEventType<span class="token punctuation">.</span><span class="token constant">POSTCOMPOSE</span><span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><h2 id="layer"><a href="#layer" class="header-anchor">#</a> Layer</h2> <p>在openlayers中, layer交由layerGroup进行统一管理, 控制图层的顺序等</p> <p>layer并没有涉及很多业务处理, 其更加像是一个管理者的角色, 控制核心属性, 比如图层的显隐, 具体如何对图层如何请求数据, 渲染数据是交给了Source和Renderer类去完成</p> <p><img src="/Blog/assets/img/04.46e6c2a2.png" alt="image"></p> <h3 id="ol-layer-group"><a href="#ol-layer-group" class="header-anchor">#</a> ol/layer/Group</h3> <p>layerGroup 作为地图的图层管理者角色, 管理地图对象下的全部图层</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">LayerGroup</span> <span class="token keyword">extends</span> <span class="token class-name">BaseLayer</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">opt_options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> options <span class="token operator">=</span> opt_options <span class="token operator">||</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> baseOptions <span class="token operator">=</span> <span class="token comment">/** @type {Options} */</span> <span class="token punctuation">(</span><span class="token function">assign</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">delete</span> baseOptions<span class="token punctuation">.</span>layers<span class="token punctuation">;</span>
+
+    <span class="token keyword">let</span> layers <span class="token operator">=</span> options<span class="token punctuation">.</span>layers<span class="token punctuation">;</span>
+
+    <span class="token keyword">super</span><span class="token punctuation">(</span>baseOptions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>layers<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>Array<span class="token punctuation">.</span><span class="token function">isArray</span><span class="token punctuation">(</span>layers<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        layers <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Collection</span><span class="token punctuation">(</span>layers<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> unique<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token function">assert</span><span class="token punctuation">(</span><span class="token keyword">typeof</span> <span class="token punctuation">(</span><span class="token comment">/** @type {?} */</span> <span class="token punctuation">(</span>layers<span class="token punctuation">)</span><span class="token punctuation">.</span>getArray<span class="token punctuation">)</span> <span class="token operator">===</span> <span class="token string">&quot;function&quot;</span><span class="token punctuation">,</span> <span class="token number">43</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// Expected `layers` to be an array or a `Collection`</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      layers <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Collection</span><span class="token punctuation">(</span><span class="token keyword">undefined</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> unique<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setLayers</span><span class="token punctuation">(</span>layers<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 获取group下所有图层state</span>
+  <span class="token function">getLayerStatesArray</span><span class="token punctuation">(</span><span class="token parameter">opt_states</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> states <span class="token operator">=</span> opt_states <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> opt_states <span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> pos <span class="token operator">=</span> states<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayers</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">layer</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      layer<span class="token punctuation">.</span><span class="token function">getLayerStatesArray</span><span class="token punctuation">(</span>states<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> ownLayerState <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayerState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 对比Group的State和Layer的State, LayerState不能超过GroupState</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> pos<span class="token punctuation">,</span> ii <span class="token operator">=</span> states<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> ii<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> layerState <span class="token operator">=</span> states<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>opacity <span class="token operator">*=</span> ownLayerState<span class="token punctuation">.</span>opacity<span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>visible <span class="token operator">=</span> layerState<span class="token punctuation">.</span>visible <span class="token operator">&amp;&amp;</span> ownLayerState<span class="token punctuation">.</span>visible<span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>maxResolution <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>
+        layerState<span class="token punctuation">.</span>maxResolution<span class="token punctuation">,</span>
+        ownLayerState<span class="token punctuation">.</span>maxResolution
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>minResolution <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span>
+        layerState<span class="token punctuation">.</span>minResolution<span class="token punctuation">,</span>
+        ownLayerState<span class="token punctuation">.</span>minResolution
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>minZoom <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">max</span><span class="token punctuation">(</span>layerState<span class="token punctuation">.</span>minZoom<span class="token punctuation">,</span> ownLayerState<span class="token punctuation">.</span>minZoom<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      layerState<span class="token punctuation">.</span>maxZoom <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">min</span><span class="token punctuation">(</span>layerState<span class="token punctuation">.</span>maxZoom<span class="token punctuation">,</span> ownLayerState<span class="token punctuation">.</span>maxZoom<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>ownLayerState<span class="token punctuation">.</span>extent <span class="token operator">!==</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>layerState<span class="token punctuation">.</span>extent <span class="token operator">!==</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          layerState<span class="token punctuation">.</span>extent <span class="token operator">=</span> <span class="token function">getIntersection</span><span class="token punctuation">(</span>
+            layerState<span class="token punctuation">.</span>extent<span class="token punctuation">,</span>
+            ownLayerState<span class="token punctuation">.</span>extent
+          <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+          layerState<span class="token punctuation">.</span>extent <span class="token operator">=</span> ownLayerState<span class="token punctuation">.</span>extent<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> states<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="ol-layer-layer"><a href="#ol-layer-layer" class="header-anchor">#</a> ol/layer/Layer</h3> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">Layer</span> <span class="token keyword">extends</span> <span class="token class-name">BaseLayer</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> baseOptions <span class="token operator">=</span> <span class="token function">assign</span><span class="token punctuation">(</span><span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> options<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">delete</span> baseOptions<span class="token punctuation">.</span>source<span class="token punctuation">;</span>
+
+    <span class="token keyword">super</span><span class="token punctuation">(</span>baseOptions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// Overwrite default render method with a custom one</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>render<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>render <span class="token operator">=</span> options<span class="token punctuation">.</span>render<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 监听source变化</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      <span class="token function">getChangeEventType</span><span class="token punctuation">(</span>LayerProperty<span class="token punctuation">.</span><span class="token constant">SOURCE</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>handleSourcePropertyChange_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> source <span class="token operator">=</span> options<span class="token punctuation">.</span>source
+      <span class="token operator">?</span> <span class="token comment">/** @type {SourceType} */</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>source<span class="token punctuation">)</span>
+      <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setSource</span><span class="token punctuation">(</span>source<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">handleSourcePropertyChange_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>sourceChangeKey_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">unlistenByKey</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>sourceChangeKey_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>sourceChangeKey_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">const</span> source <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>source<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>sourceChangeKey_ <span class="token operator">=</span> <span class="token function">listen</span><span class="token punctuation">(</span>
+        source<span class="token punctuation">,</span>
+        EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>changed<span class="token punctuation">,</span>
+        <span class="token keyword">this</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 触发layer的change事件</span>
+  <span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">++</span><span class="token keyword">this</span><span class="token punctuation">.</span>revision_<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 图层的渲染方法</span>
+  <span class="token function">render</span><span class="token punctuation">(</span><span class="token parameter">frameState<span class="token punctuation">,</span> target</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> layerRenderer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>layerRenderer<span class="token punctuation">.</span><span class="token function">prepareFrame</span><span class="token punctuation">(</span>frameState<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> layerRenderer<span class="token punctuation">.</span><span class="token function">renderFrame</span><span class="token punctuation">(</span>frameState<span class="token punctuation">,</span> target<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">getRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>renderer_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>renderer_ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">createRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>renderer_<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// layer作为图层基类, 本身不创建renderer, 由具体子类决定</span>
+  <span class="token function">createRenderer</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="renderer"><a href="#renderer" class="header-anchor">#</a> Renderer</h2> <p>图层的渲染是交由Renderer完成, 查看ol/renderer/canvas 可以发现, renderer主要是分为三大类:</p> <ol><li>Image</li> <li>Tile</li> <li>Vector</li></ol> <p><img src="/Blog/assets/img/05.49133c03.png" alt="image"></p> <h3 id="ol-renderer-canvas-imagelayer"><a href="#ol-renderer-canvas-imagelayer" class="header-anchor">#</a> ol/renderer/canvas/ImageLayer</h3> <p>在 prepareFrame中, 需要得到imageSource的 image, 且image 为加载完成状态, 才会返回image, 执行renderFrame, 否则不执行.</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">prepareFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+      <span class="token operator">!</span>hints<span class="token punctuation">[</span>ViewHint<span class="token punctuation">.</span><span class="token constant">ANIMATING</span><span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span>
+      <span class="token operator">!</span>hints<span class="token punctuation">[</span>ViewHint<span class="token punctuation">.</span><span class="token constant">INTERACTING</span><span class="token punctuation">]</span> <span class="token operator">&amp;&amp;</span>
+      <span class="token operator">!</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>renderedExtent<span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>imageSource<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> projection <span class="token operator">=</span> viewState<span class="token punctuation">.</span>projection<span class="token punctuation">;</span>
+        
+        <span class="token keyword">const</span> image <span class="token operator">=</span> imageSource<span class="token punctuation">.</span><span class="token function">getImage</span><span class="token punctuation">(</span>
+          renderedExtent<span class="token punctuation">,</span>
+          viewResolution<span class="token punctuation">,</span>
+          pixelRatio<span class="token punctuation">,</span>
+          projection
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>image <span class="token operator">&amp;&amp;</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">loadImage</span><span class="token punctuation">(</span>image<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> image<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token operator">!</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><p>如果prepareFrame函数返回了this.image_, 则进行canvas绘制, 将图层绘制出来</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">renderFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState<span class="token punctuation">,</span> target</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> image <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">;</span>
+
+    <span class="token comment">// 生成context(图层的DOM)</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">useContainer</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> canvasTransform<span class="token punctuation">,</span> layerState<span class="token punctuation">.</span>opacity<span class="token punctuation">)</span><span class="token punctuation">;</span> 
+
+    <span class="token keyword">const</span> context <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> canvas <span class="token operator">=</span> context<span class="token punctuation">.</span>canvas<span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>canvas<span class="token punctuation">.</span>width <span class="token operator">!=</span> width <span class="token operator">||</span> canvas<span class="token punctuation">.</span>height <span class="token operator">!=</span> height<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      canvas<span class="token punctuation">.</span>width <span class="token operator">=</span> width<span class="token punctuation">;</span>
+      canvas<span class="token punctuation">.</span>height <span class="token operator">=</span> height<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>containerReused<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      context<span class="token punctuation">.</span><span class="token function">clearRect</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> width<span class="token punctuation">,</span> height<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> img <span class="token operator">=</span> image<span class="token punctuation">.</span><span class="token function">getImage</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 计算canvas绘制为保证图片不变形的偏移量(dx,dy,dw,dh)</span>
+    <span class="token operator">...</span>
+
+    <span class="token function">assign</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getContextOptions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">preRender</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>dw <span class="token operator">&gt;=</span> <span class="token number">0.5</span> <span class="token operator">&amp;&amp;</span> dh <span class="token operator">&gt;=</span> <span class="token number">0.5</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> opacity <span class="token operator">=</span> layerState<span class="token punctuation">.</span>opacity<span class="token punctuation">;</span>
+      <span class="token keyword">let</span> previousAlpha<span class="token punctuation">;</span>
+      <span class="token comment">// 修改透明度</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>opacity <span class="token operator">!==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        previousAlpha <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">.</span>globalAlpha<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">.</span>globalAlpha <span class="token operator">=</span> opacity<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token comment">// 绘制图片</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">.</span><span class="token function">drawImage</span><span class="token punctuation">(</span>
+        img<span class="token punctuation">,</span>
+        <span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token operator">+</span>img<span class="token punctuation">.</span>width<span class="token punctuation">,</span>
+        <span class="token operator">+</span>img<span class="token punctuation">.</span>height<span class="token punctuation">,</span>
+        Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>dx<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>dy<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>dw<span class="token punctuation">)</span><span class="token punctuation">,</span>
+        Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>dh<span class="token punctuation">)</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>opacity <span class="token operator">!==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">.</span>globalAlpha <span class="token operator">=</span> previousAlpha<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">postRender</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>canvasTransform <span class="token operator">!==</span> canvas<span class="token punctuation">.</span>style<span class="token punctuation">.</span>transform<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      canvas<span class="token punctuation">.</span>style<span class="token punctuation">.</span>transform <span class="token operator">=</span> canvasTransform<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><h3 id="ol-renderer-canvas-tilelayer"><a href="#ol-renderer-canvas-tilelayer" class="header-anchor">#</a> ol/renderer/canvas/TileLayer</h3> <p>在prepareFrame中检查图层是否有source, 如果有就执行renderFrame</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">prepareFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token operator">!</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">renderFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState<span class="token punctuation">,</span> target</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+
+    <span class="token comment">// 获取切片号范围</span>
+    <span class="token keyword">const</span> tileRange <span class="token operator">=</span> tileGrid<span class="token punctuation">.</span><span class="token function">getTileRangeForExtentAndZ</span><span class="token punctuation">(</span>extent<span class="token punctuation">,</span> z<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tilesToDrawByZ <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    tilesToDrawByZ<span class="token punctuation">[</span>z<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 查找已加载的tiles</span>
+    <span class="token keyword">const</span> findLoadedTiles <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">createLoadedTileFinder</span><span class="token punctuation">(</span>
+      tileSource<span class="token punctuation">,</span>
+      projection<span class="token punctuation">,</span>
+      tilesToDrawByZ
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> tmpExtent <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tmpExtent<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tmpTileRange <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tmpTileRange_<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>newTiles_ <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> tileRange<span class="token punctuation">.</span>minX<span class="token punctuation">;</span> x <span class="token operator">&lt;=</span> tileRange<span class="token punctuation">.</span>maxX<span class="token punctuation">;</span> <span class="token operator">++</span>x<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> y <span class="token operator">=</span> tileRange<span class="token punctuation">.</span>minY<span class="token punctuation">;</span> y <span class="token operator">&lt;=</span> tileRange<span class="token punctuation">.</span>maxY<span class="token punctuation">;</span> <span class="token operator">++</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// 获取切片</span>
+        <span class="token keyword">const</span> tile <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTile</span><span class="token punctuation">(</span>z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">isDrawableTile</span><span class="token punctuation">(</span>tile<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">const</span> uid <span class="token operator">=</span> <span class="token function">getUid</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token keyword">if</span> <span class="token punctuation">(</span>tile<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment">// 已经加载好的tile存入tilesToDrawByZ, 等待绘制canvas</span>
+            tilesToDrawByZ<span class="token punctuation">[</span>z<span class="token punctuation">]</span><span class="token punctuation">[</span>tile<span class="token punctuation">.</span>tileCoord<span class="token punctuation">.</span><span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token operator">=</span> tile<span class="token punctuation">;</span>
+            <span class="token operator">...</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token comment">// 查找这个切片对应的下一级切片</span>
+        <span class="token keyword">const</span> childTileRange <span class="token operator">=</span> tileGrid<span class="token punctuation">.</span><span class="token function">getTileCoordChildTileRange</span><span class="token punctuation">(</span>
+          tile<span class="token punctuation">.</span>tileCoord<span class="token punctuation">,</span>
+          tmpTileRange<span class="token punctuation">,</span>
+          tmpExtent
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">let</span> covered <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>childTileRange<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          covered <span class="token operator">=</span> <span class="token function">findLoadedTiles</span><span class="token punctuation">(</span>z <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> childTileRange<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>covered<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          tileGrid<span class="token punctuation">.</span><span class="token function">forEachTileCoordParentTileRange</span><span class="token punctuation">(</span>
+            tile<span class="token punctuation">.</span>tileCoord<span class="token punctuation">,</span>
+            findLoadedTiles<span class="token punctuation">,</span>
+            tmpTileRange<span class="token punctuation">,</span>
+            tmpExtent
+          <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">useContainer</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> canvasTransform<span class="token punctuation">,</span> layerState<span class="token punctuation">.</span>opacity<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> context <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> canvas <span class="token operator">=</span> context<span class="token punctuation">.</span>canvas<span class="token punctuation">;</span>
+
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>canvas<span class="token punctuation">.</span>width <span class="token operator">!=</span> width <span class="token operator">||</span> canvas<span class="token punctuation">.</span>height <span class="token operator">!=</span> height<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      canvas<span class="token punctuation">.</span>width <span class="token operator">=</span> width<span class="token punctuation">;</span>
+      canvas<span class="token punctuation">.</span>height <span class="token operator">=</span> height<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>containerReused<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      context<span class="token punctuation">.</span><span class="token function">clearRect</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> width<span class="token punctuation">,</span> height<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token function">assign</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> tileSource<span class="token punctuation">.</span><span class="token function">getContextOptions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">preRender</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>renderedTiles<span class="token punctuation">.</span>length <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token comment">// 对Z进行排序, 按顺序加载</span>
+    <span class="token keyword">let</span> zs <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">keys</span><span class="token punctuation">(</span>tilesToDrawByZ<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>Number<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    zs<span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span>numberSafeCompareFunction<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> zs<span class="token punctuation">.</span>length <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">;</span> i <span class="token operator">&gt;=</span> <span class="token number">0</span><span class="token punctuation">;</span> <span class="token operator">--</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 计算切片左上角的偏移量等</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> tileCoordKey <span class="token keyword">in</span> tilesToDraw<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token operator">...</span>
+
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">drawTileImage</span><span class="token punctuation">(</span>
+          tile<span class="token punctuation">,</span>
+          frameState<span class="token punctuation">,</span>
+          x<span class="token punctuation">,</span>
+          y<span class="token punctuation">,</span>
+          w<span class="token punctuation">,</span>
+          h<span class="token punctuation">,</span>
+          tileGutter<span class="token punctuation">,</span>
+          transition<span class="token punctuation">,</span>
+          layerState<span class="token punctuation">.</span>opacity
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>clips <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>inTransition<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          context<span class="token punctuation">.</span><span class="token function">restore</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>renderedTiles<span class="token punctuation">.</span><span class="token function">push</span><span class="token punctuation">(</span>tile<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">updateUsedTiles</span><span class="token punctuation">(</span>frameState<span class="token punctuation">.</span>usedTiles<span class="token punctuation">,</span> tileSource<span class="token punctuation">,</span> tile<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 如果tile没有在tileQueue则将tile入队</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">manageTilePyramid</span><span class="token punctuation">(</span>
+      frameState<span class="token punctuation">,</span>
+      tileSource<span class="token punctuation">,</span>
+      tileGrid<span class="token punctuation">,</span>
+      pixelRatio<span class="token punctuation">,</span>
+      projection<span class="token punctuation">,</span>
+      extent<span class="token punctuation">,</span>
+      z<span class="token punctuation">,</span>
+      tileLayer<span class="token punctuation">.</span><span class="token function">getPreload</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><h3 id="ol-renderer-canvas-vectorlayer"><a href="#ol-renderer-canvas-vectorlayer" class="header-anchor">#</a> ol/renderer/canvas/VectorLayer</h3> <p>矢量数据的渲染和前面的两个类型很不一样, 前面是获取到图片直接绘制到canvas, 而矢量数据要根据坐标点和要素样式的不同, 去对canvas做不同的操作, 才能将要素绘制到canvas上</p> <p>在prepareFrame 函数中, 主要是将已经加载的feature通过 render/canvas/Build 文件夹下的各种GEO类型的 build 工具类进行解析, 得到canvas指令</p> <p><img src="/Blog/assets/img/10.540d5826.png" alt="image"></p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">prepareFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> vectorLayer <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getLayer</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> vectorSource <span class="token operator">=</span> vectorLayer<span class="token punctuation">.</span><span class="token function">getSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>vectorSource<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token operator">...</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>replayGroup_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>dirty_ <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 实例化canvas指令构造组, 会根据不同的GEO类型进行canvas指令构造</span>
+    <span class="token keyword">const</span> replayGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">CanvasBuilderGroup</span><span class="token punctuation">(</span>
+      <span class="token function">getRenderTolerance</span><span class="token punctuation">(</span>resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">)</span><span class="token punctuation">,</span>
+      extent<span class="token punctuation">,</span>
+      resolution<span class="token punctuation">,</span>
+      pixelRatio
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+
+    <span class="token comment">// 获取外部矢量数据(发送网络请求)</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> ii <span class="token operator">=</span> loadExtents<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> ii<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      vectorSource<span class="token punctuation">.</span><span class="token function">loadFeatures</span><span class="token punctuation">(</span>loadExtents<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">const</span> squaredTolerance <span class="token operator">=</span> <span class="token function">getSquaredRenderTolerance</span><span class="token punctuation">(</span>resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 渲染feature</span>
+    <span class="token keyword">const</span> <span class="token function-variable function">render</span> <span class="token operator">=</span>
+      <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">feature</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">let</span> styles<span class="token punctuation">;</span>
+        <span class="token keyword">const</span> styleFunction <span class="token operator">=</span>
+          feature<span class="token punctuation">.</span><span class="token function">getStyleFunction</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">||</span> vectorLayer<span class="token punctuation">.</span><span class="token function">getStyleFunction</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>styleFunction<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          styles <span class="token operator">=</span> <span class="token function">styleFunction</span><span class="token punctuation">(</span>feature<span class="token punctuation">,</span> resolution<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token comment">// 得到style,开始生成canvas指令</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>styles<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">const</span> dirty <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderFeature</span><span class="token punctuation">(</span>
+            feature<span class="token punctuation">,</span>
+            squaredTolerance<span class="token punctuation">,</span>
+            styles<span class="token punctuation">,</span>
+            replayGroup<span class="token punctuation">,</span>
+            userTransform<span class="token punctuation">,</span>
+            declutterBuilderGroup
+          <span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token keyword">this</span><span class="token punctuation">.</span>dirty_ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>dirty_ <span class="token operator">||</span> dirty<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> userExtent <span class="token operator">=</span> <span class="token function">toUserExtent</span><span class="token punctuation">(</span>extent<span class="token punctuation">,</span> projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 根据范围过滤要素</span>
+    <span class="token keyword">const</span> features <span class="token operator">=</span> vectorSource<span class="token punctuation">.</span><span class="token function">getFeaturesInExtent</span><span class="token punctuation">(</span>userExtent<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>vectorLayerRenderOrder<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      features<span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span>vectorLayerRenderOrder<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token comment">// 遍历渲染要素</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> ii <span class="token operator">=</span> features<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> ii<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">render</span><span class="token punctuation">(</span>features<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>renderedFeatures_ <span class="token operator">=</span> features<span class="token punctuation">;</span>
+
+    <span class="token comment">// 得到要渲染的要素的canvas指令</span>
+    <span class="token keyword">const</span> replayGroupInstructions <span class="token operator">=</span> replayGroup<span class="token punctuation">.</span><span class="token function">finish</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 构建渲染器, 后面executorGroup会在renderWorlds函数中根据replayGroupInstructions里面的canvas指令, 使用不同GEO类型的Executor对canvas执行绘制</span>
+    <span class="token keyword">const</span> executorGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ExecutorGroup</span><span class="token punctuation">(</span>
+      extent<span class="token punctuation">,</span>
+      resolution<span class="token punctuation">,</span>
+      pixelRatio<span class="token punctuation">,</span>
+      vectorSource<span class="token punctuation">.</span><span class="token function">getOverlaps</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      replayGroupInstructions<span class="token punctuation">,</span>
+      vectorLayer<span class="token punctuation">.</span><span class="token function">getRenderBuffer</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+    <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><p>在生成了canvas指令后, 在renderFrame 将指令翻译成绘制canvas的代码进行绘制</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">renderFrame</span><span class="token punctuation">(</span><span class="token parameter">frameState<span class="token punctuation">,</span> target</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 计算缩放和偏移</span>
+    <span class="token operator">...</span>
+
+    <span class="token comment">// 生成DOM</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">useContainer</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> canvasTransform<span class="token punctuation">,</span> layerState<span class="token punctuation">.</span>opacity<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> context <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>context<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> canvas <span class="token operator">=</span> context<span class="token punctuation">.</span>canvas<span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> replayGroup <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>replayGroup_<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> declutterExecutorGroup <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>declutterExecutorGroup<span class="token punctuation">;</span>
+
+    <span class="token comment">// 如果replayGroup里没有canvas指令</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+      <span class="token punctuation">(</span><span class="token operator">!</span>replayGroup <span class="token operator">||</span> replayGroup<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span>
+      <span class="token punctuation">(</span><span class="token operator">!</span>declutterExecutorGroup <span class="token operator">||</span> declutterExecutorGroup<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>containerReused <span class="token operator">&amp;&amp;</span> canvas<span class="token punctuation">.</span>width <span class="token operator">&gt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        canvas<span class="token punctuation">.</span>width <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 清空画布, 准备绘制</span>
+    <span class="token keyword">const</span> width <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>frameState<span class="token punctuation">.</span>size<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">*</span> pixelRatio<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> height <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>frameState<span class="token punctuation">.</span>size<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">*</span> pixelRatio<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>canvas<span class="token punctuation">.</span>width <span class="token operator">!=</span> width <span class="token operator">||</span> canvas<span class="token punctuation">.</span>height <span class="token operator">!=</span> height<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      canvas<span class="token punctuation">.</span>width <span class="token operator">=</span> width<span class="token punctuation">;</span>
+      canvas<span class="token punctuation">.</span>height <span class="token operator">=</span> height<span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>canvas<span class="token punctuation">.</span>style<span class="token punctuation">.</span>transform <span class="token operator">!==</span> canvasTransform<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        canvas<span class="token punctuation">.</span>style<span class="token punctuation">.</span>transform <span class="token operator">=</span> canvasTransform<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>containerReused<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      context<span class="token punctuation">.</span><span class="token function">clearRect</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> width<span class="token punctuation">,</span> height<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// 根据replayGroup里的canvas指令绘制</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">renderWorlds</span><span class="token punctuation">(</span>replayGroup<span class="token punctuation">,</span> frameState<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>container<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-render-canvas-instruction"><a href="#ol-render-canvas-instruction" class="header-anchor">#</a> ol/render/canvas/Instruction</h4> <p>每一个数字代表一个canvas的操作</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> Instruction <span class="token operator">=</span> <span class="token punctuation">{</span>
+  <span class="token constant">BEGIN_GEOMETRY</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
+  <span class="token constant">BEGIN_PATH</span><span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  <span class="token constant">CIRCLE</span><span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span>
+  <span class="token constant">CLOSE_PATH</span><span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span>
+  <span class="token constant">CUSTOM</span><span class="token operator">:</span> <span class="token number">4</span><span class="token punctuation">,</span>
+  <span class="token constant">DRAW_CHARS</span><span class="token operator">:</span> <span class="token number">5</span><span class="token punctuation">,</span>
+  <span class="token constant">DRAW_IMAGE</span><span class="token operator">:</span> <span class="token number">6</span><span class="token punctuation">,</span>
+  <span class="token constant">END_GEOMETRY</span><span class="token operator">:</span> <span class="token number">7</span><span class="token punctuation">,</span>
+  <span class="token constant">FILL</span><span class="token operator">:</span> <span class="token number">8</span><span class="token punctuation">,</span>
+  <span class="token constant">MOVE_TO_LINE_TO</span><span class="token operator">:</span> <span class="token number">9</span><span class="token punctuation">,</span>
+  <span class="token constant">SET_FILL_STYLE</span><span class="token operator">:</span> <span class="token number">10</span><span class="token punctuation">,</span>
+  <span class="token constant">SET_STROKE_STYLE</span><span class="token operator">:</span> <span class="token number">11</span><span class="token punctuation">,</span>
+  <span class="token constant">STROKE</span><span class="token operator">:</span> <span class="token number">12</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span>
+</code></pre></div><p>再结合canvas命令组, 每一个数组的第一个数字就是对应上面的命令</p> <p><img src="/Blog/assets/img/08.d2ac40c1.png" alt="image"></p> <p>简单解释一下</p> <p>0: 设置了fill样式
+1: 设置了line样式
+2: 开始绘制geometry, 一直到第8行都是关于这个feature的
+3: 开始绘制线
+4: 从坐标数组内的 0 到 10 依次绘制
+5: 结束绘制线
+6: 上fill
+7: 上line
+8: 这个feature绘制完成
+...
+下一个feature</p> <h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>不管是图片还是矢量的绘制, 我们都没有看到source是怎么参与进来的</p> <p>这是openlayers有意分离, renderer只做渲染的事情, 获取数据的事情完全交给source.</p> <p>将渲染和数据获取进行分离, 虽然会增加代码的复杂性, 但是这也更加方便了source的扩展, 用户可以根据自己想要的renderer类型, 自定义source以供openlayers加载.</p> <p>下篇我将会对source进行详细的介绍</p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">3/29/2023, 2:39:52 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/Blog/dailyRecord/gis/OpenLayers.html" class="prev">
+        OpenLayers 基础
+      </a></span> <span class="next"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html">
+        OpenLayers 源码分析(下篇)
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/Blog/assets/js/app.d6f4b6a2.js" defer></script><script src="/Blog/assets/js/2.fd75a44f.js" defer></script><script src="/Blog/assets/js/10.ef8ad2af.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>OpenLayers 源码分析(下篇) | Roman&#39;s Notebook</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    <link rel="icon" href="/Blog/images/logo.png">
+    <meta name="description" content="📝每天记录一点点">
+    
+    <link rel="preload" href="/Blog/assets/css/0.styles.97ce9fae.css" as="style"><link rel="preload" href="/Blog/assets/js/app.d6f4b6a2.js" as="script"><link rel="preload" href="/Blog/assets/js/2.fd75a44f.js" as="script"><link rel="preload" href="/Blog/assets/js/9.e1456e0e.js" as="script"><link rel="prefetch" href="/Blog/assets/js/10.ef8ad2af.js"><link rel="prefetch" href="/Blog/assets/js/11.6c4cb71a.js"><link rel="prefetch" href="/Blog/assets/js/12.bf292e9a.js"><link rel="prefetch" href="/Blog/assets/js/13.27d3af28.js"><link rel="prefetch" href="/Blog/assets/js/14.c90a7c8e.js"><link rel="prefetch" href="/Blog/assets/js/15.d1fb7a7e.js"><link rel="prefetch" href="/Blog/assets/js/16.090affc6.js"><link rel="prefetch" href="/Blog/assets/js/17.4e5df8a3.js"><link rel="prefetch" href="/Blog/assets/js/18.db68a2d0.js"><link rel="prefetch" href="/Blog/assets/js/19.78ffae18.js"><link rel="prefetch" href="/Blog/assets/js/20.326bfd19.js"><link rel="prefetch" href="/Blog/assets/js/21.4bc7c7af.js"><link rel="prefetch" href="/Blog/assets/js/22.d5f7595c.js"><link rel="prefetch" href="/Blog/assets/js/23.e48ece5c.js"><link rel="prefetch" href="/Blog/assets/js/24.4c1ca19a.js"><link rel="prefetch" href="/Blog/assets/js/25.97fa940f.js"><link rel="prefetch" href="/Blog/assets/js/26.acb8e14e.js"><link rel="prefetch" href="/Blog/assets/js/27.4233a341.js"><link rel="prefetch" href="/Blog/assets/js/28.a2ff22a3.js"><link rel="prefetch" href="/Blog/assets/js/29.6016abd9.js"><link rel="prefetch" href="/Blog/assets/js/3.c01d88b2.js"><link rel="prefetch" href="/Blog/assets/js/30.61781442.js"><link rel="prefetch" href="/Blog/assets/js/31.c4b84ed1.js"><link rel="prefetch" href="/Blog/assets/js/32.e426325a.js"><link rel="prefetch" href="/Blog/assets/js/33.90e060c3.js"><link rel="prefetch" href="/Blog/assets/js/34.7059796b.js"><link rel="prefetch" href="/Blog/assets/js/35.53956048.js"><link rel="prefetch" href="/Blog/assets/js/36.b2e386ad.js"><link rel="prefetch" href="/Blog/assets/js/37.8918b02a.js"><link rel="prefetch" href="/Blog/assets/js/38.16fe91ea.js"><link rel="prefetch" href="/Blog/assets/js/39.1a8073b2.js"><link rel="prefetch" href="/Blog/assets/js/4.accf9f2c.js"><link rel="prefetch" href="/Blog/assets/js/40.3383d598.js"><link rel="prefetch" href="/Blog/assets/js/41.85fae2a9.js"><link rel="prefetch" href="/Blog/assets/js/42.0404369c.js"><link rel="prefetch" href="/Blog/assets/js/43.bde5e9e5.js"><link rel="prefetch" href="/Blog/assets/js/44.babab1d1.js"><link rel="prefetch" href="/Blog/assets/js/45.3fa179d9.js"><link rel="prefetch" href="/Blog/assets/js/46.b3b4f85b.js"><link rel="prefetch" href="/Blog/assets/js/47.6759b2e2.js"><link rel="prefetch" href="/Blog/assets/js/48.64cdfd94.js"><link rel="prefetch" href="/Blog/assets/js/49.d58826b4.js"><link rel="prefetch" href="/Blog/assets/js/5.422be1ef.js"><link rel="prefetch" href="/Blog/assets/js/6.12713950.js"><link rel="prefetch" href="/Blog/assets/js/7.7a16dec8.js"><link rel="prefetch" href="/Blog/assets/js/8.10f0167f.js">
+    <link rel="stylesheet" href="/Blog/assets/css/0.styles.97ce9fae.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/Blog/" class="home-link router-link-active"><!----> <span class="site-name">Roman's Notebook</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/Blog/dailyRecord/" class="nav-link router-link-active">
+  📚学习总结
+</a></div><div class="nav-item"><a href="/Blog/bookmark/" class="nav-link">
+  📌书签整理
+</a></div><div class="nav-item"><a href="/Blog/lint/" class="nav-link">
+  ✔️编码规范&amp;协同开发
+</a></div><div class="nav-item"><a href="http://shooterblog.site/Learn-JS-Demo/%E5%89%8D%E7%AB%AF%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/index.html" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  📖知识脑图
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div><div class="nav-item"><a href="https://github.com/Roman-29" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  🔗Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <ul class="sidebar-links"><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vue3源码</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>单元测试</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>GIS</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/Blog/dailyRecord/gis/OpenLayers.html" class="sidebar-link">OpenLayers 基础</a></li><li><a href="/Blog/dailyRecord/gis/OLSourceCode1.html" class="sidebar-link">OpenLayers 源码分析(上篇)</a></li><li><a href="/Blog/dailyRecord/gis/OLSourceCode2.html" aria-current="page" class="active sidebar-link">OpenLayers 源码分析(下篇)</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#简介" class="sidebar-link">简介</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#source" class="sidebar-link">Source</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#数据源" class="sidebar-link">数据源</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#单张图片-ol-source-image" class="sidebar-link">单张图片(ol/source/Image)</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#瓦片图片-ol-source-tile" class="sidebar-link">瓦片图片(ol/source/Tile)</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#矢量数据-ol-source-vector" class="sidebar-link">矢量数据(ol/source/Vector)</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#source-change" class="sidebar-link">Source change</a></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#view-change" class="sidebar-link">View change</a></li></ul></li><li class="sidebar-sub-header"><a href="/Blog/dailyRecord/gis/OLSourceCode2.html#总结" class="sidebar-link">总结</a></li></ul></li><li><a href="/Blog/dailyRecord/gis/ArcgisAPI.html" class="sidebar-link">Arcgis API</a></li><li><a href="/Blog/dailyRecord/gis/GISsystem.html" class="sidebar-link">GIS 体系介绍</a></li><li><a href="/Blog/dailyRecord/gis/SuperMapWebGL.html" class="sidebar-link">SuperMap iClient 3D for WebGL</a></li><li><a href="/Blog/dailyRecord/gis/SuperMap3DStudy.html" class="sidebar-link">三维 WebGIS 学习笔记</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端模块化和打包工具</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>内功修炼</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端异常监控</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>总结</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>其他</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="openlayers-源码分析-下篇"><a href="#openlayers-源码分析-下篇" class="header-anchor">#</a> OpenLayers 源码分析(下篇)</h1> <h2 id="简介"><a href="#简介" class="header-anchor">#</a> 简介</h2> <p>本篇介绍 openlayers 源码中的 source 部分</p> <h2 id="source"><a href="#source" class="header-anchor">#</a> Source</h2> <p>从 openlayers 官网首页我们可以看到, openlayers 本身支持超多种类的数据来源作为图层加载到地图上, 这得益于 openlayers 可以自由的拓展 Source 类.</p> <p><img src="/Blog/assets/img/01.9699c5a1.png" alt="image"></p> <p>从源码的分析来看, 我们可以对 Source 分为三类:</p> <ol><li>单张图片 ol/source/Image</li> <li>瓦片图片 ol/source/Tile</li> <li>矢量图片 ol/source/Vector</li></ol> <h3 id="数据源"><a href="#数据源" class="header-anchor">#</a> 数据源</h3> <p>ol/source/Source 是抽象基类, 不被实例化, 其子类就是上面提到的三个类, 所以我们分析源码的时候也分成这三类分别去学习研究.</p> <p>父类是 ol/Object. 这是基类中的基类, 这种基中基一般都是定义最通用的函数, 不会有业务逻辑. 所以我们直接从 Source 开始看就可以了.</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/Source.js 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">Source</span> <span class="token keyword">extends</span> <span class="token class-name">BaseObject</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>projection_ <span class="token operator">=</span> <span class="token function">getProjection</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>attributions_ <span class="token operator">=</span> <span class="token function">adaptAttributions</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>attributions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>attributionsCollapsible_ <span class="token operator">=</span>
+      options<span class="token punctuation">.</span>attributionsCollapsible <span class="token operator">!==</span> <span class="token keyword">undefined</span>
+        <span class="token operator">?</span> options<span class="token punctuation">.</span>attributionsCollapsible
+        <span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// source的状态, 默认是ready</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>state_ <span class="token operator">=</span>
+      options<span class="token punctuation">.</span>state <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> options<span class="token punctuation">.</span>state <span class="token operator">:</span> SourceState<span class="token punctuation">.</span><span class="token constant">READY</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>wrapX_ <span class="token operator">=</span> options<span class="token punctuation">.</span>wrapX <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> options<span class="token punctuation">.</span>wrapX <span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 刷新source, source会被清空, 数据会重新加载</span>
+  <span class="token function">refresh</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token operator">...</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>可以看到, 这部分代码量非常少, 除了 state 设置为 ready, 并没有太多影响到业务的代码部分</p> <h3 id="单张图片-ol-source-image"><a href="#单张图片-ol-source-image" class="header-anchor">#</a> 单张图片(ol/source/Image)</h3> <p>相关的子类就非常多了:</p> <ol><li>ol/source/ImageArcGISRest</li> <li>ol/source/ImageCanvas</li> <li>ol/source/ImageMapGuide</li> <li>ol/source/ImageStatic</li> <li>ol/source/ImageWMS</li> <li>ol/source/Raster</li></ol> <p>再做细分, 可以将 ArcGIS, WMS, MapGuide, Static 分为一类, 其原理都是根据图片的 URL, 拿到图片数据, 生成 canvas 绘制到地图上. canvas 和 raster 分为另一类, 这一类比较复杂, 是需要根据非图片数据进行 canvas 绘制.</p> <p>我们主要分析第一类, 拿到图片数据去做图层加载, 这也是我们常用的图层加载方式.</p> <p>UML 图:</p> <p><img src="/Blog/assets/img/02.3d7ac214.png" alt="image"></p> <h4 id="ol-source-image"><a href="#ol-source-image" class="header-anchor">#</a> ol/source/Image</h4> <p>抽象基类, 定义了 getImage 函数和 handleImageChange 函数, 具体是如何生成 image 则需要子类重载</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/Image.js 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">ImageSource</span> <span class="token keyword">extends</span> <span class="token class-name">Source</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      attributions<span class="token operator">:</span> options<span class="token punctuation">.</span>attributions<span class="token punctuation">,</span>
+      projection<span class="token operator">:</span> options<span class="token punctuation">.</span>projection<span class="token punctuation">,</span>
+      state<span class="token operator">:</span> options<span class="token punctuation">.</span>state<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 分辨率</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>resolutions_ <span class="token operator">=</span>
+      options<span class="token punctuation">.</span>resolutions <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> options<span class="token punctuation">.</span>resolutions <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 获取图片方法</span>
+  <span class="token function">getImage</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> sourceProjection <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getProjection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 判断坐标系是否需要转换</span>
+    <span class="token comment">// projection参数指的是view的projection</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+      <span class="token operator">!</span><span class="token constant">ENABLE_RASTER_REPROJECTION</span> <span class="token operator">||</span>
+      <span class="token operator">!</span>sourceProjection <span class="token operator">||</span>
+      <span class="token operator">!</span>projection <span class="token operator">||</span>
+      <span class="token function">equivalent</span><span class="token punctuation">(</span>sourceProjection<span class="token punctuation">,</span> projection<span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>sourceProjection<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        projection <span class="token operator">=</span> sourceProjection<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getImageInternal</span><span class="token punctuation">(</span>extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 抽象方法, 具体如何实现在子类</span>
+  <span class="token function">getImageInternal</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">abstract</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 监听 image 改变事件.</span>
+  <span class="token function">handleImageChange</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> image <span class="token operator">=</span> <span class="token comment">/** @type {import(&quot;../Image.js&quot;).default} */</span> <span class="token punctuation">(</span>event<span class="token punctuation">.</span>target<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">switch</span> <span class="token punctuation">(</span>image<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">case</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADING</span><span class="token operator">:</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+          <span class="token keyword">new</span> <span class="token class-name">ImageSourceEvent</span><span class="token punctuation">(</span>ImageSourceEventType<span class="token punctuation">.</span><span class="token constant">IMAGELOADSTART</span><span class="token punctuation">,</span> image<span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token keyword">case</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token operator">:</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+          <span class="token keyword">new</span> <span class="token class-name">ImageSourceEvent</span><span class="token punctuation">(</span>ImageSourceEventType<span class="token punctuation">.</span><span class="token constant">IMAGELOADEND</span><span class="token punctuation">,</span> image<span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token keyword">case</span> ImageState<span class="token punctuation">.</span><span class="token constant">ERROR</span><span class="token operator">:</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+          <span class="token keyword">new</span> <span class="token class-name">ImageSourceEvent</span><span class="token punctuation">(</span>ImageSourceEventType<span class="token punctuation">.</span><span class="token constant">IMAGELOADERROR</span><span class="token punctuation">,</span> image<span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+      <span class="token keyword">default</span><span class="token operator">:</span>
+      <span class="token comment">// pass</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-source-imagearcgisrest"><a href="#ol-source-imagearcgisrest" class="header-anchor">#</a> ol/source/ImageArcGISRest</h4> <p>再看看 arcgis, 也是我们最常用的类之一</p> <p>主要内容是根据 arcgis server 的请求参数对 getImageInternal 函数进行重载</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/ImageArcGISRest 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">ImageArcGISRest</span> <span class="token keyword">extends</span> <span class="token class-name">ImageSource</span> <span class="token punctuation">{</span>
+  <span class="token comment">/**
+   * @param {Options=} opt_options Image ArcGIS Rest Options.
+   */</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">opt_options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> options <span class="token operator">=</span> opt_options <span class="token operator">?</span> opt_options <span class="token operator">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      attributions<span class="token operator">:</span> options<span class="token punctuation">.</span>attributions<span class="token punctuation">,</span>
+      imageSmoothing<span class="token operator">:</span> options<span class="token punctuation">.</span>imageSmoothing<span class="token punctuation">,</span>
+      projection<span class="token operator">:</span> options<span class="token punctuation">.</span>projection<span class="token punctuation">,</span>
+      resolutions<span class="token operator">:</span> options<span class="token punctuation">.</span>resolutions<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>url_ <span class="token operator">=</span> options<span class="token punctuation">.</span>url<span class="token punctuation">;</span>
+
+    <span class="token comment">// image加载方法, 如果为定义则使用默认方法</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>imageLoadFunction_ <span class="token operator">=</span>
+      options<span class="token punctuation">.</span>imageLoadFunction <span class="token operator">!==</span> <span class="token keyword">undefined</span>
+        <span class="token operator">?</span> options<span class="token punctuation">.</span>imageLoadFunction
+        <span class="token operator">:</span> defaultImageLoadFunction<span class="token punctuation">;</span>
+
+    <span class="token comment">// arcgis请求地图的参数</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>params_ <span class="token operator">=</span> options<span class="token punctuation">.</span>params <span class="token operator">||</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token comment">// 存储图片</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token comment">// 图片大小</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>imageSize_ <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 实现父类方法, 实例化 ol/Image类</span>
+  <span class="token function">getImageInternal</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>url_ <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    resolution <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">findNearestResolution</span><span class="token punctuation">(</span>resolution<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    pixelRatio <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>hidpi_ <span class="token operator">?</span> pixelRatio <span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> image <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">;</span>
+    <span class="token comment">// 检查是否已有image, 且关键参数未修改</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+      image <span class="token operator">&amp;&amp;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>renderedRevision_ <span class="token operator">==</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getRevision</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span>
+      image<span class="token punctuation">.</span><span class="token function">getResolution</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> resolution <span class="token operator">&amp;&amp;</span>
+      image<span class="token punctuation">.</span><span class="token function">getPixelRatio</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> pixelRatio <span class="token operator">&amp;&amp;</span>
+      <span class="token function">containsExtent</span><span class="token punctuation">(</span>image<span class="token punctuation">.</span><span class="token function">getExtent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> extent<span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> image<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token comment">// arcgis 地图服务的参数</span>
+    <span class="token keyword">const</span> params <span class="token operator">=</span> <span class="token punctuation">{</span>
+      <span class="token string">'F'</span><span class="token operator">:</span> <span class="token string">'image'</span><span class="token punctuation">,</span>
+      <span class="token string">'FORMAT'</span><span class="token operator">:</span> <span class="token string">'PNG32'</span><span class="token punctuation">,</span>
+      <span class="token string">'TRANSPARENT'</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token function">assign</span><span class="token punctuation">(</span>params<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>params_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    extent <span class="token operator">=</span> extent<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> centerX <span class="token operator">=</span> <span class="token punctuation">(</span>extent<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> extent<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> centerY <span class="token operator">=</span> <span class="token punctuation">(</span>extent<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">+</span> extent<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>ratio_ <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> halfWidth <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>ratio_ <span class="token operator">*</span> <span class="token function">getWidth</span><span class="token punctuation">(</span>extent<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> halfHeight <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>ratio_ <span class="token operator">*</span> <span class="token function">getHeight</span><span class="token punctuation">(</span>extent<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+      extent<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerX <span class="token operator">-</span> halfWidth<span class="token punctuation">;</span>
+      extent<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerY <span class="token operator">-</span> halfHeight<span class="token punctuation">;</span>
+      extent<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerX <span class="token operator">+</span> halfWidth<span class="token punctuation">;</span>
+      extent<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerY <span class="token operator">+</span> halfHeight<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> imageResolution <span class="token operator">=</span> resolution <span class="token operator">/</span> pixelRatio<span class="token punctuation">;</span>
+
+    <span class="token comment">// 计算图片的宽高.</span>
+    <span class="token keyword">const</span> width <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">ceil</span><span class="token punctuation">(</span><span class="token function">getWidth</span><span class="token punctuation">(</span>extent<span class="token punctuation">)</span> <span class="token operator">/</span> imageResolution<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> height <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">ceil</span><span class="token punctuation">(</span><span class="token function">getHeight</span><span class="token punctuation">(</span>extent<span class="token punctuation">)</span> <span class="token operator">/</span> imageResolution<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 图片地理范围.</span>
+    extent<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerX <span class="token operator">-</span> <span class="token punctuation">(</span>imageResolution <span class="token operator">*</span> width<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    extent<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerX <span class="token operator">+</span> <span class="token punctuation">(</span>imageResolution <span class="token operator">*</span> width<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    extent<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerY <span class="token operator">-</span> <span class="token punctuation">(</span>imageResolution <span class="token operator">*</span> height<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    extent<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> centerY <span class="token operator">+</span> <span class="token punctuation">(</span>imageResolution <span class="token operator">*</span> height<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>imageSize_<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> width<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>imageSize_<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> height<span class="token punctuation">;</span>
+
+    <span class="token comment">// 通过所有的参数拼接一个URL</span>
+    <span class="token keyword">const</span> url <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getRequestUrl_</span><span class="token punctuation">(</span>
+      extent<span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>imageSize_<span class="token punctuation">,</span>
+      pixelRatio<span class="token punctuation">,</span>
+      projection<span class="token punctuation">,</span>
+      params
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 得到了一个ImageWrapper类(ol/Image), 后面如何对图片请求, 请求完后如何渲染就和他有关系了</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ImageWrapper</span><span class="token punctuation">(</span>
+      extent<span class="token punctuation">,</span>
+      resolution<span class="token punctuation">,</span>
+      pixelRatio<span class="token punctuation">,</span>
+      url<span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>crossOrigin_<span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>imageLoadFunction_
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>renderedRevision_ <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getRevision</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 监听image 回调函数就是父类的handleImageChange</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+      EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleImageChange</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+
+  <span class="token comment">// 拼接arcgis地图服务 URL</span>
+  <span class="token function">getRequestUrl_</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> size<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection<span class="token punctuation">,</span> params</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment">// ArcGIS Server only wants the numeric portion of the projection ID.</span>
+    <span class="token keyword">const</span> srid <span class="token operator">=</span> projection<span class="token punctuation">.</span><span class="token function">getCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">':'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    params<span class="token punctuation">[</span><span class="token string">'SIZE'</span><span class="token punctuation">]</span> <span class="token operator">=</span> size<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">','</span> <span class="token operator">+</span> size<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'BBOX'</span><span class="token punctuation">]</span> <span class="token operator">=</span> extent<span class="token punctuation">.</span><span class="token function">join</span><span class="token punctuation">(</span><span class="token string">','</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'BBOXSR'</span><span class="token punctuation">]</span> <span class="token operator">=</span> srid<span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'IMAGESR'</span><span class="token punctuation">]</span> <span class="token operator">=</span> srid<span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'DPI'</span><span class="token punctuation">]</span> <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span><span class="token number">90</span> <span class="token operator">*</span> pixelRatio<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> url <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>url_<span class="token punctuation">;</span>
+
+    <span class="token keyword">const</span> modifiedUrl <span class="token operator">=</span> url
+      <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">MapServer\/?$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'MapServer/export'</span><span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">ImageServer\/?$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'ImageServer/exportImage'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>modifiedUrl <span class="token operator">==</span> url<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">assert</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token number">50</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// `options.featureTypes` should be an Array</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> <span class="token function">appendParams</span><span class="token punctuation">(</span>modifiedUrl<span class="token punctuation">,</span> params<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-image"><a href="#ol-image" class="header-anchor">#</a> ol/image</h4> <p>getImageInternal 函数得到的 ImageWrapper 如果 state 为 IDLE 会被调用 load 方法, 然后监听 image 标签是否加载到了图片数据, 当加载完成的时候触发 change 函数.</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">ImageWrapper</span> <span class="token keyword">extends</span> <span class="token class-name">ImageBase</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span></span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>src_ <span class="token operator">=</span> src<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Image</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token operator">...</span>
+
+  <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">==</span> ImageState<span class="token punctuation">.</span><span class="token constant">IDLE</span> <span class="token operator">||</span> <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">==</span> ImageState<span class="token punctuation">.</span><span class="token constant">ERROR</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADING</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">imageLoadFunction_</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>src_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>unlisten_ <span class="token operator">=</span> <span class="token function">listenImage</span><span class="token punctuation">(</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleImageLoad_</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleImageError_</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+  <span class="token function">handleImageLoad_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>resolution <span class="token operator">===</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>resolution <span class="token operator">=</span> <span class="token function">getHeight</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>extent<span class="token punctuation">)</span> <span class="token operator">/</span> <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">.</span>height<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">unlistenImage_</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">listenImage</span><span class="token punctuation">(</span><span class="token parameter">image<span class="token punctuation">,</span> loadHandler<span class="token punctuation">,</span> errorHandler</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> img <span class="token operator">=</span> <span class="token punctuation">(</span>image<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>img<span class="token punctuation">.</span>src <span class="token operator">&amp;&amp;</span> <span class="token constant">IMAGE_DECODE</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> promise <span class="token operator">=</span> img<span class="token punctuation">.</span><span class="token function">decode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> listening <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> <span class="token function-variable function">unlisten</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      listening <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    promise
+      <span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>listening<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">loadHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>listening<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">if</span> <span class="token punctuation">(</span>
+            error<span class="token punctuation">.</span>name <span class="token operator">===</span> <span class="token string">'EncodingError'</span> <span class="token operator">&amp;&amp;</span>
+            error<span class="token punctuation">.</span>message <span class="token operator">===</span> <span class="token string">'Invalid image type.'</span>
+          <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">loadHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token function">errorHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> unlisten<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token keyword">const</span> listenerKeys <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token function">listenOnce</span><span class="token punctuation">(</span>img<span class="token punctuation">,</span> EventType<span class="token punctuation">.</span><span class="token constant">LOAD</span><span class="token punctuation">,</span> loadHandler<span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token function">listenOnce</span><span class="token punctuation">(</span>img<span class="token punctuation">,</span> EventType<span class="token punctuation">.</span><span class="token constant">ERROR</span><span class="token punctuation">,</span> errorHandler<span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">]</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token keyword">function</span> <span class="token function">unlisten</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    listenerKeys<span class="token punctuation">.</span><span class="token function">forEach</span><span class="token punctuation">(</span>unlistenByKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="imagewms-imagestatic-等"><a href="#imagewms-imagestatic-等" class="header-anchor">#</a> ImageWMS/ImageStatic 等</h4> <p>再看看和 ImageArcGISRest 平级的 ImageWMS/ImageStatic 类, 会发现逻辑近乎一样, 核心都在 getImageInternal 里面</p> <p>基本流程: 是否已加载 -&gt; 否则准备好各种参数 -&gt; 构造请求 URL -&gt; load</p> <p>简单来说, 就是对现有的服务请求做一个封装</p> <h3 id="瓦片图片-ol-source-tile"><a href="#瓦片图片-ol-source-tile" class="header-anchor">#</a> 瓦片图片(ol/source/Tile)</h3> <p>相对于单张图片, 瓦片图片需要更加精细的对每一个图片做控制, 才能把小图片拼接成一个大图片, 所以会用到 tileGrid(切片格网)和 tileCache(切片缓存)</p> <p>UML 图:</p> <p><img src="/Blog/assets/img/03.712c8edc.png" alt="image"></p> <h4 id="ol-source-tile"><a href="#ol-source-tile" class="header-anchor">#</a> ol/source/Tile</h4> <p>创建 tileGrid 和 tileCache</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/Tile.js 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">TileSource</span> <span class="token keyword">extends</span> <span class="token class-name">Source</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      attributions<span class="token operator">:</span> options<span class="token punctuation">.</span>attributions<span class="token punctuation">,</span>
+      attributionsCollapsible<span class="token operator">:</span> options<span class="token punctuation">.</span>attributionsCollapsible<span class="token punctuation">,</span>
+      projection<span class="token operator">:</span> options<span class="token punctuation">.</span>projection<span class="token punctuation">,</span>
+      state<span class="token operator">:</span> options<span class="token punctuation">.</span>state<span class="token punctuation">,</span>
+      wrapX<span class="token operator">:</span> options<span class="token punctuation">.</span>wrapX<span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// 瓦片格网</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileGrid <span class="token operator">=</span> options<span class="token punctuation">.</span>tileGrid <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> options<span class="token punctuation">.</span>tileGrid <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token comment">// 瓦片大小</span>
+    <span class="token keyword">const</span> tileSize <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token number">256</span><span class="token punctuation">,</span> <span class="token number">256</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token comment">// 瓦片缓存</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileCache <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TileCache</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>cacheSize <span class="token operator">||</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token operator">...</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 判断范围内是否有已经loader的切片</span>
+  <span class="token function">forEachLoadedTile</span><span class="token punctuation">(</span><span class="token parameter">projection<span class="token punctuation">,</span> z<span class="token punctuation">,</span> tileRange<span class="token punctuation">,</span> callback</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> tileCache <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTileCacheForProjection</span><span class="token punctuation">(</span>projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>tileCache<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">let</span> covered <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> tile<span class="token punctuation">,</span> tileCoordKey<span class="token punctuation">,</span> loaded<span class="token punctuation">;</span>
+    <span class="token comment">// 循环遍历范围内的切片</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> x <span class="token operator">=</span> tileRange<span class="token punctuation">.</span>minX<span class="token punctuation">;</span> x <span class="token operator">&lt;=</span> tileRange<span class="token punctuation">.</span>maxX<span class="token punctuation">;</span> <span class="token operator">++</span>x<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> y <span class="token operator">=</span> tileRange<span class="token punctuation">.</span>minY<span class="token punctuation">;</span> y <span class="token operator">&lt;=</span> tileRange<span class="token punctuation">.</span>maxY<span class="token punctuation">;</span> <span class="token operator">++</span>y<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        tileCoordKey <span class="token operator">=</span> <span class="token function">getKeyZXY</span><span class="token punctuation">(</span>z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        loaded <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token comment">// 如果cache里有切片且为loader就返回缓存切片</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>tileCache<span class="token punctuation">.</span><span class="token function">containsKey</span><span class="token punctuation">(</span>tileCoordKey<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          tile <span class="token operator">=</span> <span class="token punctuation">(</span>tileCache<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>
+            tileCoordKey
+          <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+          loaded <span class="token operator">=</span> tile<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">===</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token punctuation">;</span>
+          <span class="token keyword">if</span> <span class="token punctuation">(</span>loaded<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            loaded <span class="token operator">=</span> <span class="token function">callback</span><span class="token punctuation">(</span>tile<span class="token punctuation">)</span> <span class="token operator">!==</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>loaded<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          covered <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> covered<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+
+  <span class="token comment">// 获取瓦片, 类似前面的getImage 需要子类根据不同的数据源进行函数重载</span>
+  <span class="token function">getTile</span><span class="token punctuation">(</span><span class="token parameter">z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">abstract</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 获取切片网格, 如果没有就根据坐标系创建</span>
+  <span class="token function">getTileGridForProjection</span><span class="token punctuation">(</span><span class="token parameter">projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>tileGrid<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token function">getTileGridForProjection</span><span class="token punctuation">(</span>projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileGrid<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileCache<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">refresh</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">refresh</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-source-urltile"><a href="#ol-source-urltile" class="header-anchor">#</a> ol/source/UrlTile</h4> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/UrlTile.js 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">UrlTile</span> <span class="token keyword">extends</span> <span class="token class-name">TileSource</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>generateTileUrlFunction_ <span class="token operator">=</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileUrlFunction <span class="token operator">===</span> <span class="token class-name">UrlTile</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>tileUrlFunction<span class="token punctuation">;</span>
+
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadFunction <span class="token operator">=</span> options<span class="token punctuation">.</span>tileLoadFunction<span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>tileUrlFunction<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileUrlFunction <span class="token operator">=</span> options<span class="token punctuation">.</span>tileUrlFunction<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>urls<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setUrls</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>urls<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>url<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setUrl</span><span class="token punctuation">(</span>options<span class="token punctuation">.</span>url<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadingKeys_ <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 监听 tile 改变事件</span>
+  <span class="token function">handleTileChange</span><span class="token punctuation">(</span><span class="token parameter">event</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> tile <span class="token operator">=</span> <span class="token comment">/** @type {import(&quot;../Tile.js&quot;).default} */</span> <span class="token punctuation">(</span>event<span class="token punctuation">.</span>target<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> uid <span class="token operator">=</span> <span class="token function">getUid</span><span class="token punctuation">(</span>tile<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tileState <span class="token operator">=</span> tile<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> type<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tileState <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADING</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadingKeys_<span class="token punctuation">[</span>uid<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+      type <span class="token operator">=</span> TileEventType<span class="token punctuation">.</span><span class="token constant">TILELOADSTART</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>uid <span class="token keyword">in</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadingKeys_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">delete</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadingKeys_<span class="token punctuation">[</span>uid<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      type <span class="token operator">=</span>
+        tileState <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">ERROR</span>
+          <span class="token operator">?</span> TileEventType<span class="token punctuation">.</span><span class="token constant">TILELOADERROR</span>
+          <span class="token operator">:</span> tileState <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADED</span>
+          <span class="token operator">?</span> TileEventType<span class="token punctuation">.</span><span class="token constant">TILELOADEND</span>
+          <span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>type <span class="token operator">!=</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">TileSourceEvent</span><span class="token punctuation">(</span>type<span class="token punctuation">,</span> tile<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 用于构造切片请求的URL 子类会重写该函数</span>
+  <span class="token comment">// 如果没有重写会在setUrls使用默认模版</span>
+  <span class="token function">tileUrlFunction</span><span class="token punctuation">(</span><span class="token parameter">tileCoord<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">setUrls</span><span class="token punctuation">(</span><span class="token parameter">urls</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>urls <span class="token operator">=</span> urls<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> key <span class="token operator">=</span> urls<span class="token punctuation">.</span><span class="token function">join</span><span class="token punctuation">(</span><span class="token string">'\n'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 如果为true, 使用默认模版</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>generateTileUrlFunction_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setTileUrlFunction</span><span class="token punctuation">(</span><span class="token function">createFromTemplates</span><span class="token punctuation">(</span>urls<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileGrid<span class="token punctuation">)</span><span class="token punctuation">,</span> key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">setKey</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-source-tileimage"><a href="#ol-source-tileimage" class="header-anchor">#</a> ol/source/TileImage</h4> <p>包办了切片的创建以及缓存处理</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// ol/source/TileImage.js 关键代码</span>
+
+<span class="token keyword">class</span> <span class="token class-name">TileImage</span> <span class="token keyword">extends</span> <span class="token class-name">UrlTile</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment">// ImageTile是 ol/ImageTile.js</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>tileClass <span class="token operator">=</span>
+      options<span class="token punctuation">.</span>tileClass <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> options<span class="token punctuation">.</span>tileClass <span class="token operator">:</span> ImageTile<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 获取切片的方法</span>
+  <span class="token function">getTile</span><span class="token punctuation">(</span><span class="token parameter">z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> sourceProjection <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getProjection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment">// 判断坐标系是否需要转换</span>
+    <span class="token comment">// projection参数指的是view的projection</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>
+      <span class="token operator">!</span><span class="token constant">ENABLE_RASTER_REPROJECTION</span> <span class="token operator">||</span>
+      <span class="token operator">!</span>sourceProjection <span class="token operator">||</span>
+      <span class="token operator">!</span>projection <span class="token operator">||</span>
+      <span class="token function">equivalent</span><span class="token punctuation">(</span>sourceProjection<span class="token punctuation">,</span> projection<span class="token punctuation">)</span>
+    <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTileInternal</span><span class="token punctuation">(</span>
+        z<span class="token punctuation">,</span>
+        x<span class="token punctuation">,</span>
+        y<span class="token punctuation">,</span>
+        pixelRatio<span class="token punctuation">,</span>
+        sourceProjection <span class="token operator">||</span> projection
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 获取 ol/ImageTile 类</span>
+  <span class="token function">getTileInternal</span><span class="token punctuation">(</span><span class="token parameter">z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> tile <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tileCoordKey <span class="token operator">=</span> <span class="token function">getKeyZXY</span><span class="token punctuation">(</span>z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> key <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getKey</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>tileCache<span class="token punctuation">.</span><span class="token function">containsKey</span><span class="token punctuation">(</span>tileCoordKey<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 创建tile, 并存入缓存</span>
+      tile <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">createTile_</span><span class="token punctuation">(</span>z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection<span class="token punctuation">,</span> key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileCache<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>tileCoordKey<span class="token punctuation">,</span> tile<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      tile <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tileCache<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>tileCoordKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token operator">...</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> tile<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 创建切片(ol/ImageTile)</span>
+  <span class="token function">createTile_</span><span class="token punctuation">(</span><span class="token parameter">z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection<span class="token punctuation">,</span> key</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> tileCoord <span class="token operator">=</span> <span class="token punctuation">[</span>z<span class="token punctuation">,</span> x<span class="token punctuation">,</span> y<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> urlTileCoord <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTileCoordForTileUrlFunction</span><span class="token punctuation">(</span>
+      tileCoord<span class="token punctuation">,</span>
+      projection
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tileUrl <span class="token operator">=</span> urlTileCoord
+      <span class="token operator">?</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">tileUrlFunction</span><span class="token punctuation">(</span>urlTileCoord<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection<span class="token punctuation">)</span>
+      <span class="token operator">:</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+    <span class="token keyword">const</span> tile <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">this<span class="token punctuation">.</span>tileClass</span><span class="token punctuation">(</span>
+      tileCoord<span class="token punctuation">,</span>
+      tileUrl <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> TileState<span class="token punctuation">.</span><span class="token constant">IDLE</span> <span class="token operator">:</span> TileState<span class="token punctuation">.</span><span class="token constant">EMPTY</span><span class="token punctuation">,</span>
+      tileUrl <span class="token operator">!==</span> <span class="token keyword">undefined</span> <span class="token operator">?</span> tileUrl <span class="token operator">:</span> <span class="token string">''</span><span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>crossOrigin<span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileLoadFunction<span class="token punctuation">,</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>tileOptions
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    tile<span class="token punctuation">.</span>key <span class="token operator">=</span> key<span class="token punctuation">;</span>
+    tile<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleTileChange</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> tile<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-source-tilearcgisrest"><a href="#ol-source-tilearcgisrest" class="header-anchor">#</a> ol/source/TileArcGISRest</h4> <p>具体用于实例化的 source 类, 主要重写父类的 tileUrlFunction 函数, 根据实际情况, 构造切片 URL</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">TileArcGISRest</span> <span class="token keyword">extends</span> <span class="token class-name">TileImage</span> <span class="token punctuation">{</span>
+  <span class="token operator">...</span>
+
+  <span class="token comment">// 重写父类函数, 构建自己的URL拼接函数</span>
+  <span class="token function">tileUrlFunction</span><span class="token punctuation">(</span><span class="token parameter">tileCoord<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> tileGrid <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTileGrid</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>tileGrid<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      tileGrid <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getTileGridForProjection</span><span class="token punctuation">(</span>projection<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>tileGrid<span class="token punctuation">.</span><span class="token function">getResolutions</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>length <span class="token operator">&lt;=</span> tileCoord<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>pixelRatio <span class="token operator">!=</span> <span class="token number">1</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>hidpi_<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      pixelRatio <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> tileExtent <span class="token operator">=</span> tileGrid<span class="token punctuation">.</span><span class="token function">getTileCoordExtent</span><span class="token punctuation">(</span>tileCoord<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tmpExtent_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">let</span> tileSize <span class="token operator">=</span> <span class="token function">toSize</span><span class="token punctuation">(</span>tileGrid<span class="token punctuation">.</span><span class="token function">getTileSize</span><span class="token punctuation">(</span>tileCoord<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tmpSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>pixelRatio <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      tileSize <span class="token operator">=</span> <span class="token function">scaleSize</span><span class="token punctuation">(</span>tileSize<span class="token punctuation">,</span> pixelRatio<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>tmpSize<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> baseParams <span class="token operator">=</span> <span class="token punctuation">{</span>
+      <span class="token string">'F'</span><span class="token operator">:</span> <span class="token string">'image'</span><span class="token punctuation">,</span>
+      <span class="token string">'FORMAT'</span><span class="token operator">:</span> <span class="token string">'PNG32'</span><span class="token punctuation">,</span>
+      <span class="token string">'TRANSPARENT'</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token function">assign</span><span class="token punctuation">(</span>baseParams<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>params_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getRequestUrl_</span><span class="token punctuation">(</span>
+      tileCoord<span class="token punctuation">,</span>
+      tileSize<span class="token punctuation">,</span>
+      tileExtent<span class="token punctuation">,</span>
+      pixelRatio<span class="token punctuation">,</span>
+      projection<span class="token punctuation">,</span>
+      baseParams
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">getRequestUrl_</span><span class="token punctuation">(</span>
+    <span class="token parameter">tileCoord<span class="token punctuation">,</span>
+    tileSize<span class="token punctuation">,</span>
+    tileExtent<span class="token punctuation">,</span>
+    pixelRatio<span class="token punctuation">,</span>
+    projection<span class="token punctuation">,</span>
+    params</span>
+  <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> urls <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>urls<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>urls<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">undefined</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> srid <span class="token operator">=</span> projection<span class="token punctuation">.</span><span class="token function">getCode</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">':'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">pop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    params<span class="token punctuation">[</span><span class="token string">'SIZE'</span><span class="token punctuation">]</span> <span class="token operator">=</span> tileSize<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token string">','</span> <span class="token operator">+</span> tileSize<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'BBOX'</span><span class="token punctuation">]</span> <span class="token operator">=</span> tileExtent<span class="token punctuation">.</span><span class="token function">join</span><span class="token punctuation">(</span><span class="token string">','</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'BBOXSR'</span><span class="token punctuation">]</span> <span class="token operator">=</span> srid<span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'IMAGESR'</span><span class="token punctuation">]</span> <span class="token operator">=</span> srid<span class="token punctuation">;</span>
+    params<span class="token punctuation">[</span><span class="token string">'DPI'</span><span class="token punctuation">]</span> <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">round</span><span class="token punctuation">(</span>
+      params<span class="token punctuation">[</span><span class="token string">'DPI'</span><span class="token punctuation">]</span> <span class="token operator">?</span> params<span class="token punctuation">[</span><span class="token string">'DPI'</span><span class="token punctuation">]</span> <span class="token operator">*</span> pixelRatio <span class="token operator">:</span> <span class="token number">90</span> <span class="token operator">*</span> pixelRatio
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">let</span> url<span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>urls<span class="token punctuation">.</span>length <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      url <span class="token operator">=</span> urls<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> index <span class="token operator">=</span> <span class="token function">modulo</span><span class="token punctuation">(</span><span class="token function">tileCoordHash</span><span class="token punctuation">(</span>tileCoord<span class="token punctuation">)</span><span class="token punctuation">,</span> urls<span class="token punctuation">.</span>length<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      url <span class="token operator">=</span> urls<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">const</span> modifiedUrl <span class="token operator">=</span> url
+      <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">MapServer\/?$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'MapServer/export'</span><span class="token punctuation">)</span>
+      <span class="token punctuation">.</span><span class="token function">replace</span><span class="token punctuation">(</span><span class="token regex"><span class="token regex-delimiter">/</span><span class="token regex-source language-regex">ImageServer\/?$</span><span class="token regex-delimiter">/</span></span><span class="token punctuation">,</span> <span class="token string">'ImageServer/exportImage'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">return</span> <span class="token function">appendParams</span><span class="token punctuation">(</span>modifiedUrl<span class="token punctuation">,</span> params<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-imagetile"><a href="#ol-imagetile" class="header-anchor">#</a> ol/ImageTile</h4> <p>getTileInternal 函数得到的 ImageTile 如果 state 为 IDLE 会被推入 tileQueue, 在 handlePostRender 的时候调用 load 方法, 然后监听 image 标签是否加载到了图片数据, 当加载完成的时候触发 change 函数.</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">ImageTile</span> <span class="token keyword">extends</span> <span class="token class-name">Tile</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter"><span class="token operator">...</span></span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Image</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  <span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">ERROR</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> TileState<span class="token punctuation">.</span><span class="token constant">IDLE</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>image_ <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Image</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>crossOrigin_ <span class="token operator">!==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">.</span>crossOrigin <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>crossOrigin_<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">==</span> TileState<span class="token punctuation">.</span><span class="token constant">IDLE</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADING</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">tileLoadFunction_</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>src_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>unlisten_ <span class="token operator">=</span> <span class="token function">listenImage</span><span class="token punctuation">(</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleImageLoad_</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">handleImageError_</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">handleImageLoad_</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> image <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>image_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>image<span class="token punctuation">.</span>naturalWidth <span class="token operator">&amp;&amp;</span> image<span class="token punctuation">.</span>naturalHeight<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> TileState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> TileState<span class="token punctuation">.</span><span class="token constant">EMPTY</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">unlistenImage_</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="矢量数据-ol-source-vector"><a href="#矢量数据-ol-source-vector" class="header-anchor">#</a> 矢量数据(ol/source/Vector)</h3> <p>矢量数据</p> <p>矢量图层会在 prepareFrame 阶段加载外部矢量数据</p> <p><img src="/Blog/assets/img/09.039d69f2.png" alt="image"></p> <h4 id="ol-source-vector"><a href="#ol-source-vector" class="header-anchor">#</a> ol/source/Vector</h4> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">class</span> <span class="token class-name">VectorSource</span> <span class="token keyword">extends</span> <span class="token class-name">Source</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span><span class="token punctuation">(</span><span class="token parameter">opt_options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+    <span class="token comment">// 矢量数据的url和要使用的format(对应类型的解析器)</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>url_ <span class="token operator">=</span> options<span class="token punctuation">.</span>url<span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>format_ <span class="token operator">=</span> options<span class="token punctuation">.</span>format<span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>options<span class="token punctuation">.</span>loader <span class="token operator">!==</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>loader_ <span class="token operator">=</span> options<span class="token punctuation">.</span>loader<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>url_ <span class="token operator">!==</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 如果url不为空, 使用featureloader工具类加载数据</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>loader_ <span class="token operator">=</span> <span class="token function">xhr</span><span class="token punctuation">(</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>url_<span class="token punctuation">,</span>
+        <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>format_<span class="token punctuation">)</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">loadFeatures</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> projection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> loadedExtentsRtree <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>loadedExtentsRtree_<span class="token punctuation">;</span>
+    <span class="token keyword">const</span> extentsToLoad <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">strategy_</span><span class="token punctuation">(</span>extent<span class="token punctuation">,</span> resolution<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">let</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span> ii <span class="token operator">=</span> extentsToLoad<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i <span class="token operator">&lt;</span> ii<span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">const</span> extentToLoad <span class="token operator">=</span> extentsToLoad<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">;</span>
+      <span class="token keyword">const</span> alreadyLoaded <span class="token operator">=</span> loadedExtentsRtree<span class="token punctuation">.</span><span class="token function">forEachInExtent</span><span class="token punctuation">(</span>
+        extentToLoad<span class="token punctuation">,</span>
+        <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">object</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token keyword">return</span> <span class="token function">containsExtent</span><span class="token punctuation">(</span>object<span class="token punctuation">.</span>extent<span class="token punctuation">,</span> extentToLoad<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>alreadyLoaded<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+          <span class="token keyword">new</span> <span class="token class-name">VectorSourceEvent</span><span class="token punctuation">(</span>VectorEventType<span class="token punctuation">.</span><span class="token constant">FEATURESLOADSTART</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">loader_</span><span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>
+          <span class="token keyword">this</span><span class="token punctuation">,</span>
+          extentToLoad<span class="token punctuation">,</span>
+          resolution<span class="token punctuation">,</span>
+          projection<span class="token punctuation">,</span>
+          <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">features</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+              <span class="token keyword">new</span> <span class="token class-name">VectorSourceEvent</span><span class="token punctuation">(</span>
+                VectorEventType<span class="token punctuation">.</span><span class="token constant">FEATURESLOADEND</span><span class="token punctuation">,</span>
+                <span class="token keyword">undefined</span><span class="token punctuation">,</span>
+                features
+              <span class="token punctuation">)</span>
+            <span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+          <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>
+              <span class="token keyword">new</span> <span class="token class-name">VectorSourceEvent</span><span class="token punctuation">(</span>VectorEventType<span class="token punctuation">.</span><span class="token constant">FEATURESLOADERROR</span><span class="token punctuation">)</span>
+            <span class="token punctuation">)</span><span class="token punctuation">;</span>
+          <span class="token punctuation">}</span><span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+        loadedExtentsRtree<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>extentToLoad<span class="token punctuation">,</span> <span class="token punctuation">{</span>extent<span class="token operator">:</span> extentToLoad<span class="token punctuation">.</span><span class="token function">slice</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>loading <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>loader_ <span class="token operator">!==</span> <span class="token constant">VOID</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">// 添加feature, 触发change</span>
+  <span class="token function">addFeatures</span><span class="token punctuation">(</span><span class="token parameter">features</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">addFeaturesInternal</span><span class="token punctuation">(</span>features<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">changed</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><h4 id="ol-featureloader"><a href="#ol-featureloader" class="header-anchor">#</a> ol/featureloader</h4> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">xhr</span><span class="token punctuation">(</span><span class="token parameter">url<span class="token punctuation">,</span> format</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">extent<span class="token punctuation">,</span> resolution<span class="token punctuation">,</span> projection<span class="token punctuation">,</span> success<span class="token punctuation">,</span> failure</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> source <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+    <span class="token function">loadFeaturesXhr</span><span class="token punctuation">(</span>
+      url<span class="token punctuation">,</span>
+      format<span class="token punctuation">,</span>
+      extent<span class="token punctuation">,</span>
+      resolution<span class="token punctuation">,</span>
+      projection<span class="token punctuation">,</span>
+      <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">features<span class="token punctuation">,</span> dataProjection</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>success <span class="token operator">!==</span> <span class="token keyword">undefined</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+          <span class="token function">success</span><span class="token punctuation">(</span>features<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        source<span class="token punctuation">.</span><span class="token function">addFeatures</span><span class="token punctuation">(</span>features<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      failure <span class="token operator">?</span> failure <span class="token operator">:</span> <span class="token constant">VOID</span>
+    <span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h3 id="source-change"><a href="#source-change" class="header-anchor">#</a> Source change</h3> <p>看完上面三种类型图层的 source 部分, 我们还留意到每次在获取完数据的时候都会触发 change 函数.</p> <p>原因是 renderer 会对的 image 进行监听(vector 类型的 source 不会, 因为不需要 image)</p> <p>以 ol/renderer/Layer 为例:</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token function">loadImage</span><span class="token punctuation">(</span><span class="token parameter">image</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> imageState <span class="token operator">=</span> image<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>imageState <span class="token operator">!=</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADED</span> <span class="token operator">&amp;&amp;</span> imageState <span class="token operator">!=</span> ImageState<span class="token punctuation">.</span><span class="token constant">ERROR</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// 如果state不是LOADED或ERROR 就会监听change</span>
+      image<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>EventType<span class="token punctuation">.</span><span class="token constant">CHANGE</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>boundHandleImageChange_<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>imageState <span class="token operator">==</span> ImageState<span class="token punctuation">.</span><span class="token constant">IDLE</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      image<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      imageState <span class="token operator">=</span> image<span class="token punctuation">.</span><span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> imageState <span class="token operator">==</span> ImageState<span class="token punctuation">.</span><span class="token constant">LOADED</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><p>同理, 在 boundHandleImageChange_ 函数中也会调用 this.change 触发 layerGroup 监听 layer 的 change 事件, 最后调用 layerGroup 的 this.change ,map 监听到 layerGroup 变化了, 重新执行 render 函数, 将数据渲染到地图上.</p> <h3 id="view-change"><a href="#view-change" class="header-anchor">#</a> View change</h3> <p>除了 source 会 change, 当用户操作地图的时候. View 也会触发 change 事件, 导致 map 重新执行 render 函数.</p> <p>对三种类型的图层, 也会有三种不同的处理过程</p> <p><img src="/Blog/assets/img/11.c854a198.png" alt="image"></p> <h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>最后, 整合绘制了一张完整的 UML 图和 map 加载图层的流程图</p> <p>UML 图</p> <p><img src="/Blog/assets/img/12.87223d2f.png" alt="image"></p> <p>流程图</p> <p><img src="/Blog/assets/img/13.31d94b33.png" alt="image"></p></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">3/29/2023, 2:39:52 PM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/Blog/dailyRecord/gis/OLSourceCode1.html" class="prev">
+        OpenLayers 源码分析(上篇)
+      </a></span> <span class="next"><a href="/Blog/dailyRecord/gis/ArcgisAPI.html">
+        Arcgis API
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/Blog/assets/js/app.d6f4b6a2.js" defer></script><script src="/Blog/assets/js/2.fd75a44f.js" defer></script><script src="/Blog/assets/js/9.e1456e0e.js" defer></script>
+  </body>
+</html>
