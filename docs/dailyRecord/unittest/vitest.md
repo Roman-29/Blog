@@ -19,7 +19,8 @@ import { reset, useTodoStore } from "./todo";
 test("add item", () => {
   // 准备数据
   const todoStore = useTodoStore();
-  const todo = { title: "吃饭" };
+  title = "吃饭";
+  const todo = { title };
 
   // 调用
   todoStore.addTodo(todo);
@@ -51,7 +52,7 @@ test("add item", () => {
 
 - 编写方便, 适合刚刚创建的测试
 - 代码重复, 每个测试实例都要写一遍, 当数据结构发生变化将造成大面积报错
-  例如 addItem 的参数除了 title, 需要增加一个 value
+  例如 addTodo 的参数除了 title, 需要增加一个 value
 - 当准备数据的逻辑变复杂时, 影响测试可读性
 
 ### 委托建立
@@ -103,10 +104,8 @@ describe("todo", () => {
 优缺点:
 
 - 代码精简, 适合多个测试实例通用的的数据
-- 容易堆积代码不需要的数据
+- - 容易堆积代码不需要的数据(充分使用测试层级, 对测试进行模块细分, 针对性使用隐式数据)
 - 测试实例逻辑被切割, 可读性变差
-
-充分使用测试层级, 对测试进行模块细分, 针对性使用隐式数据将是最优解
 
 ### 后门建立
 
@@ -140,7 +139,7 @@ test("remove item", () => {
 
 案例:
 
-```ts
+```typescrip
 describe("todo", () => {
   // 不合理的测试
   test("buy book", () => {
@@ -454,7 +453,7 @@ export function readAndProcessFile(filePath: string): string {
 
 **fs 模块**就是函数强依赖的低层, 如果要测试就必须对 fs 模块做测试替身处理
 
-### 函数的依赖注入
+#### 函数的依赖注入
 
 对函数进行改造, 将强依赖模块以**参数**形式抽离
 
